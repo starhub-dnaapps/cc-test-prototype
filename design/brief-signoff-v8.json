@@ -1,0 +1,1193 @@
+{
+  "title": "CC-Demo club management system: Facilities module (v05)",
+  "pm": {
+    "problem": "NSRCC runs its facilities (courts, tables, rooms, pool, gym, bowling) with bookings by phone and counter sheets, member status and SAFRA or guest entitlement checked by hand, no fair waiting list, pool and gym entry counted on paper, a pen-and-paper bowling log reconciled against the lane system by eye, and refunds decided case by case. The To-Be design (HMS Facilities) needs eligibility and entitlement from Membership, availability with resource blocks, counter and online booking with payment before confirmation, amendment, cancellation with the 24-hour refund rule, exceptional refunds approved by the Operations Manager, no-shows, swimming and Fitness Centre admission with day passes, the Bowling counter with reconciliation and exceptions, a waiting list, configuration that is Draft until approved, Fitness Centre reference lists, Personal Training and operational reports. Facilities is built here on the Membership base, and the Events venues become Facilities records.",
+    "users": [
+      {
+        "role": "Facilities Staff",
+        "goal": "Book, amend and cancel at the counter, record no-shows, block resources, admit to the pool and Fitness Centre, sell day passes, run the Bowling counter and reconciliation, manage the waiting list and Personal Training",
+        "context": "Facilities counter, pool and gym desk, bowling counter",
+        "device": "desktop"
+      },
+      {
+        "role": "Member or non-member account holder",
+        "goal": "Book, amend and cancel facilities they may use, join and answer the waiting list",
+        "context": "Home or on the move",
+        "device": "both"
+      },
+      {
+        "role": "Membership Manager (as Operations Manager)",
+        "goal": "Approve or reject exceptional refunds and Draft facility configuration; read the Facilities reports",
+        "context": "Office",
+        "device": "desktop"
+      },
+      {
+        "role": "Membership Administrator",
+        "goal": "Configure facilities, resources, rates and windows (Draft until approved) and keep the Fitness Centre lists",
+        "context": "Office",
+        "device": "desktop"
+      },
+      {
+        "role": "Events Team",
+        "goal": "Pick an event venue from the Facilities records; a published session blocks a bookable venue",
+        "context": "Events office",
+        "device": "desktop"
+      }
+    ],
+    "decision": {
+      "type": "validate",
+      "question": "Should we build Facilities (eligibility and entitlement, availability and blocks, bookings with amendment, cancellation, refunds and no-shows, swimming and fitness admission with day passes, bowling counter and reconciliation, waiting list, configuration, Fitness Centre and Personal Training, operational reports) on the Membership base, with Events venues linked to the Facilities records?"
+    },
+    "scenarios": "Feature: CC-Demo Facilities (v05)\n\nScenario: Counter booking checks every rule, then confirms on payment (Story-136, 137, 138, 142, BR-086 – 092)\n  Given Facilities Staff F. Tan and Member A. Tan (TA10001)\n  When F. Tan books Tennis Court 1 on Saturday 31 Oct 2026 at 08:00 for 1 hour\n  Then the weekend member rate is shown and frozen\n  And the booking stays Pending payment until the card payment succeeds\n  And then it is Confirmed with a reference FB-… and a receipt, and the payment is on the Finance stub\n\nScenario: Member books online on a public holiday and extends it (Story-138, 139, BR-091, BR-093)\n  Given Member A. Tan in the Portal\n  When they book Squash on the public holiday\n  Then the weekend rate applies\n  When they extend it by one hour\n  Then the difference is paid first and the booking keeps its reference\n\nScenario: A block over a booking flags it; the club moves it (Story-137, 140, BR-088, BR-095)\n  Given Tennis Court 2 booked tomorrow\n  When F. Tan blocks Court 2 for maintenance with a reason\n  Then the block is saved and the booking is flagged, never removed\n  And no new booking is possible on Court 2 in that period\n  When F. Tan moves the booking to Court 3 as club-initiated\n  Then the flag clears and no refund is due\n\nScenario: Waiting list offers in join order (Story-148, BR-104)\n  Given Saturday 19:00 Karaoke is full and J. Ho, B. Lim and P. Rao (NM-02) are waiting in that order\n  When J. Ho withdraws and a Karaoke booking is cancelled\n  Then B. Lim is offered the room for 2 hours\n  When the offer is let expire\n  Then P. Rao is offered it, accepts and pays (stub), and the booking is Confirmed\n\nScenario: Pool admission within capacity and fees (Story-143, BR-098)\n  When F. Tan admits a member (free) and a guest (S$5 paid) to the pool\n  Then occupancy rises by 2\n  When occupancy is 60 / 60\n  Then the next admission is refused\n\nScenario: Bowling sale needs a receipt number (Story-145, BR-101)\n  When F. Tan records a bowling sale without a receipt number\n  Then it is refused\n  When the receipt number is added and the payment succeeds\n  Then the transaction is Paid and on the Finance stub\n\nScenario: Configuration is Draft until approved (Story-149, BR-105, BR-091)\n  When the Administrator raises the Tennis weekend member rate\n  Then it is saved as Draft and new bookings keep the old rate\n  And the Billiards 1 – 3 hour limit cannot be changed\n  When the Manager approves the change\n  Then new bookings use the new rate and confirmed ones keep theirs\n\nScenario: Facilities reports run on live data and export (Story-152, BR-031 – 034)\n  When the Manager runs HMS-FAC-RR-004 Facility utilisation and HMS-FAC-RR-002 Cancellations and no-shows for this week\n  Then each shows the live Facilities records, or \"No records\" for an empty period\n  And the Export as PDF and XLS buttons export them, recorded as runs",
+    "successCriteria": [
+      "No member record is created or copied by Facilities: customers reference the existing memberships, their dependants, non-member accounts, SAFRA card numbers or named guests (0 copies)",
+      "No booking or admission for a customer whose category or entitlement does not allow it, and no member rate for a member who is not Active (0 cases, BR-086, BR-099)",
+      "No overlapping active bookings and no booking inside an active block; a block never removes a booking (0 cases, BR-087, BR-088)",
+      "No chargeable booking confirmed before a successful payment, and no exceptional refund without the Operations Manager's approval or approved by its requester (0 cases, BR-092, BR-096)",
+      "No bowling record reconciled without a match, and no exception closed without a disposition and reason (0 cases, BR-102, BR-103)",
+      "Reviewers run the v05 scenarios and the kept v01 to v04 scenarios end to end with the scenario guide (48 of 48)"
+    ],
+    "businessRules": [
+      "BR-001: When a membership is activated, then it gets a unique Membership ID of 2 initials + 5 digits",
+      "BR-002: When a Person already has an open application for the same membership type and purpose, then a new one is blocked",
+      "BR-003: When an application is assessed, then the applicant must meet the eligibility of the type (adult types ≥ 21, Junior 5–20, Corporate: Singapore-registered company)",
+      "BR-004: When a request is submitted for approval, then every mandatory document of its type must be attached",
+      "BR-005: When a request is decided, then only an Approver (or the Manager where routed) may decide, and never the person who submitted it",
+      "BR-006: When a fee applies to an approved request, then it completes only after Finance confirms payment; a failed payment leaves it Awaiting Payment",
+      "BR-007: When an application is saved, then a recruitment source is required, and referrer details are required when the source is Referral",
+      "BR-008: When a renewal, conversion or extension would take combined Associate + Ordinary duration over 30 years (absent periods excluded), then it is blocked",
+      "BR-009: When a renewal is requested, then it must come from the member and the membership must be Active (or Absent / Medical)",
+      "BR-010: When Full converts to Basic, then remaining months × 2; when Basic converts to Full, then remaining months ÷ 2, rounded down",
+      "BR-011: When a transfer is requested, then the type must be transferable (Corporate is not) and the recipient must meet the type's eligibility",
+      "BR-012: When an extension is requested, then it may not exceed 24 months; ≤ 12 months goes to an Approver, > 12 months to the Manager",
+      "BR-013: When a withdrawal completes, then Finance must have cleared the balance, no refund of the remaining term is made, and the status becomes Withdrawn",
+      "BR-014: When the expiry date passes with no approved renewal, then the status becomes Expired; an approved rejoin reactivates with the original Membership ID",
+      "BR-015: When a deceased case proposes a goodwill refund, then only the Manager may approve it, and only then is it sent to Finance",
+      "BR-016: When an absent period is requested, then it must be 3–24 months and must not overlap an approved absent period; the term is suspended for it",
+      "BR-017: When a medical period is requested, then it may not exceed 12 months, and the expiry date is not changed",
+      "BR-018: When a status change is requested, then it is allowed only if the transition matrix permits it; a membership has exactly one current status",
+      "BR-019: When the status is Active, then privileges and billing are on; Absent / Medical: privileges off, billing per policy; Suspended: privileges off, billing on; other statuses: both off",
+      "BR-020: When a supplementary membership is created, then its principal must be Active; when the principal ends, the supplementary ends too",
+      "BR-021: When a junior member reaches 21, then junior eligibility ends; nothing converts automatically",
+      "BR-022: When a corporate nominee is assigned, then active nominees may not exceed the type's limit; a new corporate membership needs the Administrator",
+      "BR-023: When credit is checked, then available credit = In-House Credit Limit − Finance outstanding balance; if the Finance balance is unavailable, the check is blocked; Spending Credit Granted never changes",
+      "BR-024: When a vehicle is registered, then the membership must be Active and have fewer than 4 active vehicles",
+      "BR-025: When a card is issued, then the membership must be Active; the digital card is primary; a replacement voids the previous card",
+      "BR-026: When a marketing campaign is sent, then persons who withheld marketing consent are excluded; service correspondence is not affected",
+      "BR-027: When an active member's profile is saved, then mandatory fields (name, ID, date of birth, mobile, email, address) must be filled",
+      "BR-028: When a configuration value is referenced by a record, then it can be made inactive but not deleted",
+      "BR-029: When a request is approved, then its fee is read from the fee configuration of the type and event; no fee is requested before approval",
+      "BR-030: When a referred application completes, then a referral reward is raised only if an active referral campaign exists",
+      "BR-031: When a user opens the report catalogue or runs, exports or defines a report, then only the reports and data scope their role's access rule allows are offered; audit and workflow-history reports are restricted further",
+      "BR-032: When a report is run, then every required parameter must be given and valid, and the output is limited to the selected criteria",
+      "BR-033: When a report run matches no records, then a valid no-data result is shown without error; a run never changes a source record",
+      "BR-034: When a generated report is exported, then only a report designated for export may be, as Excel or PDF, with exactly the rows and scope shown on screen",
+      "BR-035: When a user-defined report is saved, then it builds on an approved report, cannot widen the role's data scope, and gets a new version with an effective date; earlier runs keep their version",
+      "BR-036: When a tee-sheet period is prepared, then tee times are generated per course (Changi, Kranji), day type and session from the configuration, and 9-hole play is allowed only in the weekday 07:01 – 07:57 period, never on weekend or public-holiday mornings",
+      "BR-037: When a tee time is booked online, then the request must fall inside the booking window and at least 2 hours before tee-off; staff-assisted booking may go later",
+      "BR-038: When a golfer is booked, then they hold no other session that day (an active waitlist entry counts); a second same-day 18-hole round needs Golf Manager approval with a reason",
+      "BR-039: When a flight is booked, then it has at most 4 golfers and at least 2 on weekdays or 3 on weekends and public holidays; a single golfer joins an existing flight instead of opening an invalid solo flight",
+      "BR-040: When a golfer uses member privileges, then their membership or nominee status from MMS must be Active with golf privilege; a suspended member cannot book or play",
+      "BR-041: When a Basic Member books, then they play weekdays independently, and on weekends only in a flight whose main booker is an eligible Full Member",
+      "BR-042: When guests are added, then the introducer is at least 18 and plays in the same flight, brings at most 3 guests, each guest holds a recognised handicap, and no guest plays at Changi on Saturday afternoon without approval",
+      "BR-043: When eligibility is checked, then on weekends and public holidays male HI ≤ 24.4 and female HI ≤ 36.4 play at any time; male 24.5 – 36.4, female 36.5 – 40.4 and NSRCC PC holders play weekdays or from 16:30; an external PC does not count",
+      "BR-044: When capacity is released, then it is offered first to the earliest waitlist entry whose party fits, held for 15 minutes; on decline or expiry the next entry gets it, and only then does it return to general availability",
+      "BR-045: When a booking is amended, then a player substitution carries the substitution fee, and a course change is allowed only with equivalent capacity at the other course and carries the course-change fee",
+      "BR-046: When a booking is cancelled with less than 72 hours' notice, then the late-cancellation charge (based on the course green fee) is raised on the booking member",
+      "BR-047: When an amendment, cancellation, no-show, fee or rain-check exception is waived or extended, then a Golf Manager approves it with a reason (and evidence where required); the requester cannot approve it",
+      "BR-048: When a golfer checks in, then it is at least 15 minutes before tee-off; later arrivals go to the late-arrival treatment",
+      "BR-049: When a golfer is released to play, then membership or guest eligibility, handicap or NSRCC PC, insurance (existing, annual or MSIG day insurance) and the 9 / 18-hole declaration are all satisfied, and the charge outcome is accepted",
+      "BR-050: When a guest claims a special rate without Guest Eligibility Proof, then the sign-in guest rate applies; proof produced within 7 working days allows an adjustment",
+      "BR-051: When a golfer is late, then they are rescheduled to a later free tee time if one exists, else joined by skipping holes if Golf Operations permits, else treated as a no-show with the no-show charge",
+      "BR-052: When a course is suspended or closed, then only the Club Captain, Vice-Captain, Golf Manager or an approved executive may do it; golfers who had not teed off get the green and buggy fee refund path, not a rain check",
+      "BR-053: When a qualifying suspension interrupts a golfer who has teed off before completing the first 9, or an 18-hole golfer who cannot cross over, then a 9-hole rain check is issued",
+      "BR-054: When a rain check is issued, then it is valid for 1 month, linked to the golfer, not transferable and has no cash value; an extension needs approval (BR-047)",
+      "BR-055: When a 9-hole rain check is applied to an 18-hole booking, then the golfer pays the top-up; a cheaper booking gives no residual refund",
+      "BR-056: When a handicap extract is imported, then it is staged and validated (identifier, gender, HI range) before it replaces the effective data; failing rows become exceptions and the prior values stay in history",
+      "BR-057: When capacity is blocked for maintenance, an HMS event, private use, a programme or management, then those tee times cannot be booked, keep their reason and source reference, and on release go to the waitlist first",
+      "BR-058: When golf charges are raised, then the rate comes from course, player category, 9 / 18 holes and day type, and every chargeable golfer has a responsible payer (member, introducing member for guests, corporate account, or self)",
+      "BR-059: When a golf charge is handed to Finance, then GMS keeps the Finance status (pending, accepted, rejected); member in-house credit needs Finance-derived eligibility (BR-023); GMS never stores a balance",
+      "BR-060: When a shift or day is closed, then counts and totals are compiled from GMS records, and unresolved exceptions and events without a Finance status stay flagged, never silently cleared",
+      "BR-061: When an event is published, then it needs no approval but every item its configuration requires (venue, schedule, sessions, capacity where controlled, rates where paid, free / paid choice) must be complete; only the Events Team may configure and publish",
+      "BR-062: When a registration is made online or at the counter, then the event or session registration window must be open (default: opens at publication, closes when the event starts)",
+      "BR-063: When a participant is registered, then they must meet the event's eligibility (who may register: members only, members and dependants, or open to non-members; age category), with member status taken from MMS (only Active members get member privileges)",
+      "BR-064: When a participant's rate is set, then it is the event rate for their qualifying category (member / non-member, adult / child); the member rate needs an Active member or responsible member; the rate and amount are frozen on the registration",
+      "BR-065: When a registration has several participants, then it is confirmed only if every participant is eligible and the whole group fits; the group is never split automatically; at most the configured participants per registration",
+      "BR-066: When capacity is checked, then confirmed places plus active holds and reserved offers may never exceed the event or session capacity",
+      "BR-067: When a paid registration goes to settlement, then the whole group's places are held (online: 15 minutes; counter: while the transaction is open); a hold is not a confirmed booking and is released on failure, abandonment or expiry",
+      "BR-068: When a registration needs payment, then it is confirmed only on a successful settlement outcome (online channel online, counter channel at the counter, or member account where Finance says the member is eligible, BR-023); a free event confirms without settlement",
+      "BR-069: When an eligible group does not fit and the waitlist is enabled, then the whole group may join the waitlist, with no payment",
+      "BR-070: When places become free, then the waitlist is read in FIFO order of join time, skipping (without losing priority) any group that does not fit in full or is no longer eligible; changing a waitlisted group's participants resets its join time",
+      "BR-071: When a waitlist place is offered, then the places stay reserved for the offer window (default 24 hours) for acceptance and payment; on expiry or failed payment they go to the next entry",
+      "BR-072: When a registration is confirmed, then each participant gets their own QR credential, linked to the registration and its sessions",
+      "BR-073: When attendance is recorded, then the credential must match a confirmed registration for that session; unmatched, cancelled or wrong-session credentials are refused, and a participant is recorded at most once per session",
+      "BR-074: When a participant cannot present a usable QR, then authorised Events staff may record attendance only against an existing confirmed registration, keeping the staff member and the reason",
+      "BR-075: When event personnel attend, then their attendance is recorded apart from participants and never uses participant capacity",
+      "BR-076: When an event misses its minimum participation, then the Events Team decides to proceed or cancel; it is never cancelled automatically",
+      "BR-077: When a participant cancels a confirmed registration, then it is classified participant-initiated, the amount paid is forfeited, the QR stops being valid and the freed places go to the waitlist",
+      "BR-078: When the club cancels an event or session, then affected registrations are cancelled; any refund or reversal, full or partial, needs Events Manager authorisation before it goes to Finance",
+      "BR-079: When the club reschedules an event or session, then confirmed participants keep their place or decline; a declining participant's refund, full or partial, needs Events Manager authorisation, and the freed places go to the waitlist",
+      "BR-080: When a function room update arrives from the Function Room Booking System, then HMS Events reflects its latest status; only a confirmed status counts as confirmed, tentative holds never do, and an update with an unknown reference changes nothing",
+      "BR-081: When a published event is changed, then a new price or eligibility rule applies only to future registrations, a cancellation goes through BR-078 and a schedule change with confirmed registrations goes through BR-079",
+      "BR-082: When capacity is reduced, then it may not go below the confirmed places plus active holds and reserved offers",
+      "BR-083: When an event's last session has ended, then the event is shown as Completed, with no manual close",
+      "BR-086: When a facility booking or admission is requested, then the customer's category (Member, SAFRA member, Non-member, Guest, Bungalow guest) and entitlement must allow that facility; member privileges apply only to an Active member (status from MMS); if the category cannot be set, no entitlement or member rate applies",
+      "BR-087: When a booking is confirmed, then the resource must be free for the whole period: no overlapping active booking on the same resource, and the customer may not hold two overlapping bookings",
+      "BR-088: When a resource is blocked (maintenance, event, lesson, operational closure) with a reason, then it cannot be booked in that period and no override is allowed; a block over an existing booking is flagged for resolution, never removing the booking silently",
+      "BR-089: When a booking is made, then its date must be inside the facility's booking window for the customer's category; same-day bookings only where the facility allows them",
+      "BR-090: When a booking is made, then its duration must fit the facility's minimum and maximum in whole slots; Billiards is 1 to 3 hours",
+      "BR-091: When a booking is priced, then the rate comes from the facility, the customer category (SAFRA rate where the facility allows SAFRA) and the day type; a public holiday is a weekend day unless a separate rate is set; the amount is frozen at confirmation",
+      "BR-092: When a booking is chargeable, then it is confirmed and gets its reference only after a successful payment; on failure or abandonment it stays unconfirmed and the slot is not reserved; a free facility confirms without payment",
+      "BR-093: When a booking is amended, then the new details pass every booking rule again and the amount is recalculated; extra amounts must be paid first; if payment fails or the new slot is gone, the original booking stays; released time inside 24 hours follows the cancellation refund rule",
+      "BR-094: When a booking is cancelled, then a reason is required and the resource is released at once (unless separately blocked)",
+      "BR-095: When a cancellation is priced, then a customer cancelling at least 24 hours before the start gets a full refund and less than 24 hours none; a club-initiated cancellation gets a full refund unless the customer accepts an alternative slot",
+      "BR-096: When a refund outside the standard policy is asked for, then it needs an Operations Manager's approval and a recorded reason before the refund instruction goes to Finance",
+      "BR-097: When a confirmed booking is recorded as a no-show, then no standard refund is due (an exceptional refund follows BR-096)",
+      "BR-098: When a customer is admitted to the Swimming Pool or Fitness Centre, then it is an admission, not a time slot: only during operating hours, within capacity, and after any admission or day-pass payment unless an entitlement covers access; attendance and occupancy are recorded",
+      "BR-099: When a customer enters the Fitness Centre, then they need an Active membership, a valid bungalow visitor pass (complimentary) or a valid day pass; a non-member with neither buys a day pass first",
+      "BR-100: When a day pass is issued, then it is valid for the whole operating day of issue and allows same-day re-entry; it is not valid on another day",
+      "BR-101: When a bowling counter transaction is recorded, then it needs a receipt number and is paid at the Bowling counter before play, for members and non-members alike; no member-account charging",
+      "BR-102: When a bowling export file is reconciled, then each record is matched to one CMS counter transaction by receipt number and checked on amount (tolerance S$0.00), date and payment method; unmatched, duplicate or mismatched records become exceptions; reconciled records are locked",
+      "BR-103: When a bowling exception is worked, then it stays open until Bowling Operations records a disposition and reason; an amount, payment-method, refund or void issue is escalated to Finance; it closes only as reconciled or formally accepted",
+      "BR-104: When no suitable slot is free and the facility's waiting list is enabled, then an eligible customer may join it; a freed slot is offered in FIFO order for the response window; it becomes a booking only on acceptance in time and any payment, otherwise it goes to the next entry; a request can be withdrawn before acceptance",
+      "BR-105: When facility configuration is saved, then incomplete or unapproved values are not effective for new transactions (they stay Draft), and the Billiards 1 – 3 hour limit cannot be changed",
+      "BR-106: When a Personal Training session is requested, then it is confirmed only for a participant who meets the PT eligibility policy; while the PT policy is TBC, scheduling, price and cancellation are not assumed and the session stays Pending policy where needed",
+      "BR-084: When a page opens in a tab, then it renders only if the tab's role is one the page lists; otherwise it shows no content, and every link to a page the role cannot open is plain text, not a link",
+      "BR-085: When a Member tab reads member data, then it reads only its own account (membership, requests, golf bookings, rain checks, event registrations), set once from the launcher",
+      "BR-171: When an application or profile is saved, then the email must be a valid address and the mobile a Singapore number (+65, 8 digits, starting 8 or 9)",
+      "BR-172: When dates are entered, then the date of birth is not in the future, and a period's end date is after its start date",
+      "BR-173: When the first fee of a new or rejoining membership is confirmed paid in a month, then the membership starts on the 1st of the next month",
+      "BR-174: When a membership starts or is renewed, then its expiry = start date + the type's term in months (from configuration), moved out by approved absent months (BR-016)",
+      "BR-175: When a request is Submitted, then it is read-only until it is returned for correction or decided; only a Draft or Pending Documents request can be edited",
+      "BR-176: When a request is rejected or returned, then a reason is required",
+      "BR-177: When a material action happens (create, submit, decide, pay, apply, status change, configuration change), then a history entry records actor, role, time, from and to status, and comment; entries are never edited or deleted",
+      "BR-178: When a fee request is waiting at Payment pending in v01, then only an Approver may record payment through the labelled Finance stub; nothing marks a payment confirmed by itself"
+    ],
+    "dataEntities": [
+      {
+        "name": "persons",
+        "fields": [
+          "id",
+          "fullName",
+          "idType",
+          "idNumber",
+          "dateOfBirth",
+          "mobile",
+          "email",
+          "address",
+          "nationality",
+          "marketingConsent"
+        ]
+      },
+      {
+        "name": "memberships",
+        "fields": [
+          "membershipId",
+          "personId",
+          "typeCode",
+          "status",
+          "joinedDate",
+          "startDate",
+          "expiryDate",
+          "absentPeriods",
+          "medicalPeriods",
+          "responsibleMembershipId",
+          "sponsorName",
+          "nominees",
+          "classification",
+          "transferredFrom",
+          "contract",
+          "recruitmentSource",
+          "referrerMembershipId"
+        ]
+      },
+      {
+        "name": "requests",
+        "fields": [
+          "id",
+          "type",
+          "membershipId",
+          "personId",
+          "status",
+          "createdBy",
+          "createdByName",
+          "createdAt",
+          "submittedAt",
+          "route",
+          "details",
+          "documents",
+          "fee",
+          "decision",
+          "history"
+        ]
+      },
+      {
+        "name": "handoffs",
+        "fields": [
+          "id",
+          "requestId",
+          "membershipId",
+          "kind",
+          "description",
+          "amount",
+          "status",
+          "via",
+          "stubRef",
+          "recordedBy",
+          "createdAt"
+        ]
+      },
+      {
+        "name": "financeStub",
+        "fields": [
+          "available",
+          "outstanding"
+        ]
+      },
+      {
+        "name": "vehicles",
+        "fields": [
+          "id",
+          "membershipId",
+          "plate",
+          "make",
+          "status",
+          "labelHistory"
+        ]
+      },
+      {
+        "name": "cards",
+        "fields": [
+          "id",
+          "membershipId",
+          "kind",
+          "issued",
+          "status",
+          "reason"
+        ]
+      },
+      {
+        "name": "outbox",
+        "fields": [
+          "id",
+          "at",
+          "template",
+          "kind",
+          "recipient",
+          "ref",
+          "status"
+        ]
+      },
+      {
+        "name": "integrationEvents",
+        "fields": [
+          "id",
+          "at",
+          "target",
+          "event",
+          "ref",
+          "stub"
+        ]
+      },
+      {
+        "name": "audit",
+        "fields": [
+          "id",
+          "at",
+          "actor",
+          "role",
+          "action",
+          "ref",
+          "outcome",
+          "before",
+          "after"
+        ]
+      },
+      {
+        "name": "modules",
+        "fields": [
+          "code",
+          "name",
+          "builtIn",
+          "status",
+          "summary"
+        ]
+      },
+      {
+        "name": "config",
+        "fields": [
+          "membershipTypes",
+          "fees",
+          "limits",
+          "documents",
+          "transitions",
+          "privileges",
+          "recruitmentSources",
+          "templates",
+          "campaigns",
+          "golf",
+          "events"
+        ]
+      },
+      {
+        "name": "reports",
+        "fields": [
+          "id",
+          "name",
+          "answers",
+          "module",
+          "area",
+          "params",
+          "exportable",
+          "audit",
+          "plannedIn",
+          "legacy"
+        ]
+      },
+      {
+        "name": "accessRules",
+        "fields": [
+          "officer",
+          "manager",
+          "admin",
+          "golfops"
+        ]
+      },
+      {
+        "name": "reportRuns",
+        "fields": [
+          "id",
+          "report",
+          "definition",
+          "version",
+          "params",
+          "by",
+          "role",
+          "at",
+          "rows",
+          "exports",
+          "source"
+        ]
+      },
+      {
+        "name": "definitions",
+        "fields": [
+          "id",
+          "name",
+          "base",
+          "status",
+          "versions"
+        ]
+      },
+      {
+        "name": "dashboards",
+        "fields": [
+          "id",
+          "name",
+          "roles",
+          "tiles",
+          "charts"
+        ]
+      },
+      {
+        "name": "legacyReports",
+        "fields": [
+          "id",
+          "name",
+          "inventory",
+          "outputType",
+          "disposition",
+          "successor",
+          "owner",
+          "note"
+        ]
+      },
+      {
+        "name": "courses",
+        "fields": [
+          "code",
+          "name",
+          "status",
+          "statusBy",
+          "statusAt",
+          "reason"
+        ]
+      },
+      {
+        "name": "teeSheets",
+        "fields": [
+          "course",
+          "date",
+          "status",
+          "publishedBy"
+        ]
+      },
+      {
+        "name": "golfers",
+        "fields": [
+          "personId",
+          "gender",
+          "hi",
+          "sgaNo",
+          "pc",
+          "insurance",
+          "hiHistory"
+        ]
+      },
+      {
+        "name": "guests",
+        "fields": [
+          "id",
+          "name",
+          "gender",
+          "hi",
+          "category",
+          "proof",
+          "insurance"
+        ]
+      },
+      {
+        "name": "golfBookings",
+        "fields": [
+          "id",
+          "course",
+          "date",
+          "time",
+          "session",
+          "dayType",
+          "mainBooker",
+          "players",
+          "channel",
+          "bookedAt",
+          "status",
+          "amendments",
+          "cancelledAt",
+          "lateCancellation",
+          "rainCheckId"
+        ]
+      },
+      {
+        "name": "courseBlocks",
+        "fields": [
+          "id",
+          "course",
+          "date",
+          "session",
+          "purpose",
+          "reason",
+          "source",
+          "status",
+          "by",
+          "at"
+        ]
+      },
+      {
+        "name": "waitlist",
+        "fields": [
+          "id",
+          "course",
+          "date",
+          "time",
+          "party",
+          "mainBooker",
+          "players",
+          "joinedAt",
+          "status",
+          "offer"
+        ]
+      },
+      {
+        "name": "rainChecks",
+        "fields": [
+          "id",
+          "personId",
+          "holes",
+          "issued",
+          "expiry",
+          "source",
+          "status",
+          "extension",
+          "bookingId"
+        ]
+      },
+      {
+        "name": "golfApprovals",
+        "fields": [
+          "id",
+          "kind",
+          "ref",
+          "amount",
+          "reason",
+          "requestedBy",
+          "at",
+          "status",
+          "decidedBy",
+          "decidedAt",
+          "decisionReason"
+        ]
+      },
+      {
+        "name": "golfExceptions",
+        "fields": [
+          "id",
+          "personId",
+          "guestId",
+          "type",
+          "basis",
+          "raised",
+          "status",
+          "approvedBy",
+          "approvedAt",
+          "reason"
+        ]
+      },
+      {
+        "name": "handicapImports",
+        "fields": [
+          "id",
+          "at",
+          "by",
+          "rows",
+          "accepted",
+          "rejected",
+          "status"
+        ]
+      },
+      {
+        "name": "shiftCloses",
+        "fields": [
+          "id",
+          "date",
+          "by",
+          "at",
+          "counts",
+          "flagged"
+        ]
+      },
+      {
+        "name": "golfCharges",
+        "fields": [
+          "id",
+          "bookingId",
+          "course",
+          "date",
+          "personId",
+          "guestId",
+          "category",
+          "type",
+          "amount",
+          "payer",
+          "finance",
+          "financeRef"
+        ]
+      },
+      {
+        "name": "events",
+        "fields": [
+          "id",
+          "name",
+          "category",
+          "venue",
+          "status",
+          "paid",
+          "eligibility",
+          "scope",
+          "windowOpen",
+          "windowClose",
+          "capacity",
+          "waitlist",
+          "minParticipants",
+          "maxPerRegistration",
+          "rates",
+          "sessions",
+          "roomRef",
+          "createdBy",
+          "publishedAt",
+          "history",
+          "venueId"
+        ]
+      },
+      {
+        "name": "accountHolders",
+        "fields": [
+          "id",
+          "name",
+          "email",
+          "mobile",
+          "dateOfBirth"
+        ]
+      },
+      {
+        "name": "eventRegistrations",
+        "fields": [
+          "id",
+          "eventId",
+          "sessionIds",
+          "accountHolder",
+          "payer",
+          "channel",
+          "status",
+          "participants",
+          "amount",
+          "createdAt",
+          "joinedAt",
+          "heldUntil",
+          "offerUntil",
+          "settlement",
+          "history"
+        ]
+      },
+      {
+        "name": "eventAttendance",
+        "fields": [
+          "eventId",
+          "sessionId",
+          "registrationId",
+          "qr",
+          "ref",
+          "at",
+          "by",
+          "manual",
+          "reason"
+        ]
+      },
+      {
+        "name": "personnelAttendance",
+        "fields": [
+          "eventId",
+          "sessionId",
+          "personnelId",
+          "at",
+          "by"
+        ]
+      },
+      {
+        "name": "eventSettlements",
+        "fields": [
+          "id",
+          "registrationId",
+          "eventId",
+          "payer",
+          "method",
+          "amount",
+          "finance",
+          "financeRef",
+          "at"
+        ]
+      },
+      {
+        "name": "eventRefunds",
+        "fields": [
+          "id",
+          "registrationId",
+          "eventId",
+          "ref",
+          "amount",
+          "kind",
+          "reason",
+          "proposedBy",
+          "at",
+          "status",
+          "decidedBy",
+          "decidedAt",
+          "decisionReason",
+          "finance",
+          "financeRef"
+        ]
+      },
+      {
+        "name": "roomBookings",
+        "fields": [
+          "ref",
+          "room",
+          "date",
+          "start",
+          "end",
+          "eventId",
+          "status",
+          "updatedAt"
+        ]
+      },
+      {
+        "name": "roomFeed",
+        "fields": [
+          "id",
+          "type",
+          "ref",
+          "room",
+          "date",
+          "start",
+          "end",
+          "eventId",
+          "applied",
+          "result"
+        ]
+      },
+      {
+        "name": "facilityBookings",
+        "fields": [
+          "id",
+          "customer",
+          "category",
+          "resource",
+          "date",
+          "start",
+          "hours",
+          "status",
+          "amount",
+          "channel",
+          "createdAt",
+          "createdBy",
+          "receipt",
+          "guests",
+          "flag",
+          "history",
+          "cancelReason",
+          "cancelledAt",
+          "cancelledBy",
+          "refund"
+        ]
+      },
+      {
+        "name": "facilityPayments",
+        "fields": [
+          "id",
+          "ref",
+          "kind",
+          "payer",
+          "method",
+          "amount",
+          "result",
+          "receipt",
+          "finance",
+          "financeRef",
+          "at"
+        ]
+      },
+      {
+        "name": "facilityRefunds",
+        "fields": [
+          "id",
+          "bookingId",
+          "kind",
+          "amount",
+          "reason",
+          "requestedBy",
+          "at",
+          "status",
+          "decidedBy",
+          "decidedAt",
+          "decisionReason",
+          "finance",
+          "financeRef"
+        ]
+      },
+      {
+        "name": "resourceBlocks",
+        "fields": [
+          "id",
+          "resource",
+          "from",
+          "to",
+          "type",
+          "reason",
+          "source",
+          "by",
+          "at",
+          "active"
+        ]
+      },
+      {
+        "name": "facilityWaitlist",
+        "fields": [
+          "id",
+          "customer",
+          "category",
+          "facility",
+          "date",
+          "start",
+          "hours",
+          "joinedAt",
+          "status",
+          "offeredAt",
+          "offerUntil",
+          "bookingId"
+        ]
+      },
+      {
+        "name": "admissions",
+        "fields": [
+          "id",
+          "facility",
+          "customer",
+          "category",
+          "date",
+          "in",
+          "out",
+          "fee",
+          "status",
+          "pass",
+          "by"
+        ]
+      },
+      {
+        "name": "dayPasses",
+        "fields": [
+          "code",
+          "holder",
+          "name",
+          "date",
+          "amount",
+          "receipt",
+          "by"
+        ]
+      },
+      {
+        "name": "bowlingTxns",
+        "fields": [
+          "id",
+          "receiptNo",
+          "member",
+          "amount",
+          "method",
+          "date",
+          "at",
+          "by",
+          "status",
+          "runId"
+        ]
+      },
+      {
+        "name": "bowlingRuns",
+        "fields": [
+          "id",
+          "at",
+          "by",
+          "source",
+          "rows",
+          "matched",
+          "exceptions"
+        ]
+      },
+      {
+        "name": "bowlingExceptions",
+        "fields": [
+          "id",
+          "runId",
+          "type",
+          "receiptNo",
+          "txnId",
+          "detail",
+          "status",
+          "disposition",
+          "reason",
+          "by",
+          "at",
+          "financeRef"
+        ]
+      },
+      {
+        "name": "fitnessEquipment",
+        "fields": [
+          "id",
+          "name",
+          "quantity",
+          "active"
+        ]
+      },
+      {
+        "name": "fitnessInstructors",
+        "fields": [
+          "id",
+          "name",
+          "speciality",
+          "active"
+        ]
+      },
+      {
+        "name": "ptSessions",
+        "fields": [
+          "id",
+          "participant",
+          "trainer",
+          "date",
+          "start",
+          "status",
+          "by",
+          "at"
+        ]
+      },
+      {
+        "name": "facilityConfigChanges",
+        "fields": [
+          "id",
+          "facility",
+          "field",
+          "status",
+          "savedBy",
+          "savedAt",
+          "decidedBy",
+          "decidedAt",
+          "reason",
+          "effectiveFrom"
+        ]
+      }
+    ],
+    "scope": {
+      "in": [
+        "Facilities: eligibility and entitlement from Membership; availability grid and resource blocks; counter and online booking with payment through the Finance stub; amendment; cancellation with the 24-hour refund rule; exceptional refunds approved by the Manager; no-shows; waiting list with offers; pool and Fitness Centre admission, day passes and the simulated visitor pass; Bowling counter, reconciliation and exceptions; configuration Draft until approved; Fitness Centre lists; Personal Training",
+        "Club Reporting: the 8 Facilities reports HMS-FAC-RR-001 to 008 in the Report Catalogue, exportable",
+        "Events: venues are Facilities records; a published session blocks a bookable venue",
+        "Membership, Club Reporting, Golf and Events of v01 to v04, kept; the launcher shows Facilities live and two planned modules"
+      ],
+      "out": [
+        "Resorts and Finance screens (deferred to v06 and v07); the bungalow visitor pass is a simulated list until Resorts; the Finance side of facility payments, refunds and escalations is a stub",
+        "Real payments, a real Bowling Management System interface, SAFRA membership verification, real e-mail and SMS",
+        "Real authentication and any server, API or database"
+      ]
+    },
+    "constraints": [
+      "Membership stays authoritative for member status, type and relationships; Facilities only reads them",
+      "A chargeable booking is confirmed only after payment; a block never removes a booking",
+      "Exceptional refunds and configuration changes need the Manager's approval, never the requester's",
+      "Timers run on a fixed demo clock (Wed 28 Oct 2026 11:55)",
+      "Historical records are never physically deleted",
+      "Static site opened from file://, browser storage, invented data, Bootstrap 5.3.3 as the only library"
+    ],
+    "references": {
+      "prd": "projects/nsrcc_prototype/output/full-build-v05/prd/prd-v6.md"
+    }
+  },
+  "design": {
+    "tokens": {
+      "color": {
+        "brand-primary": "#250E62",
+        "brand-primary-dark": "#B9A3F5",
+        "brand-primary-hover": "#1F0B54",
+        "brand-primary-hover-dark": "#CDBDF8",
+        "brand-on-primary": "#FFFFFF",
+        "brand-on-primary-dark": "#16131F",
+        "brand-accent": "#4B2AA5",
+        "brand-accent-dark": "#C4B2F7",
+        "brand-soft": "#F1EEFB",
+        "brand-soft-dark": "#2B2342",
+        "brand-alt": "#4B2AA5",
+        "brand-alt-dark": "#9F86F0",
+        "brand-alt-hover": "#250E62",
+        "brand-alt-hover-dark": "#B9A3F5",
+        "brand-on-alt": "#FFFFFF",
+        "brand-on-alt-dark": "#16131F",
+        "text": "#3E3E3E",
+        "text-dark": "#ECEAF2",
+        "link": "#4B2AA5",
+        "link-dark": "#C4B2F7",
+        "surface": "#FAF9FB",
+        "surface-dark": "#16131F",
+        "surface-2": "#FFFFFF",
+        "surface-2-dark": "#211C2E",
+        "surface-3": "#F1F2F4",
+        "surface-3-dark": "#1B1726",
+        "text-muted": "#6F7279",
+        "text-muted-dark": "#ABA6B8",
+        "text-planned": "#5F6268",
+        "text-planned-dark": "#ABA6B8",
+        "nav-text": "#727272",
+        "nav-text-dark": "#B8B4C2",
+        "border": "#DEDFE3",
+        "border-dark": "#3A3448",
+        "border-input": "#E0E0E0",
+        "border-input-dark": "#4A4358",
+        "border-strong": "#C4C4C4",
+        "border-strong-dark": "#5A5268",
+        "row-divider": "#EBEBEE",
+        "row-divider-dark": "#2E2839",
+        "focus-border": "#CDB8EF",
+        "focus-border-dark": "#9F86F0",
+        "footer-bg": "#250E62",
+        "footer-bg-dark": "#250E62",
+        "footer-text": "#FFFFFF",
+        "footer-text-dark": "#FFFFFF",
+        "footer-muted": "#DCD6EC",
+        "footer-muted-dark": "#DCD6EC",
+        "chip-hold-bg": "#FFF3DF",
+        "chip-hold-bg-dark": "#33280F",
+        "chip-hold-border": "#FFB45C",
+        "chip-hold-border-dark": "#8A6A2E",
+        "success": "#077D3C",
+        "success-dark": "#5FD68A",
+        "success-bg": "#E6F9EE",
+        "success-bg-dark": "#15301F",
+        "warning": "#895400",
+        "warning-dark": "#F0B55A",
+        "warning-bg": "#FFF5E6",
+        "warning-bg-dark": "#33280F",
+        "danger": "#C4050F",
+        "danger-dark": "#FF8A80",
+        "danger-bg": "#FFE7E9",
+        "danger-bg-dark": "#3A1E24",
+        "info": "#156BB5",
+        "info-dark": "#8CC4F5",
+        "info-bg": "#E9F3FA",
+        "info-bg-dark": "#132A3D",
+        "neutral": "#616161",
+        "neutral-dark": "#B8B4C2",
+        "neutral-bg": "#F1F2F4",
+        "neutral-bg-dark": "#2A2536",
+        "chip-primary-bg": "#F0EBFB",
+        "chip-primary-bg-dark": "#2B2342",
+        "chip-primary-border": "#B994FF",
+        "chip-primary-border-dark": "#6F5BB5",
+        "tag": "#B02561",
+        "tag-dark": "#F28DB8",
+        "tag-bg": "#FDE8F0",
+        "tag-bg-dark": "#3A2030",
+        "alert-bg": "#FFE7E9",
+        "alert-bg-dark": "#3A1E24",
+        "alert-border": "#FF1D2E",
+        "alert-border-dark": "#FF8A80",
+        "alert-title": "#C4050F",
+        "alert-title-dark": "#FF8A80",
+        "qr-bg": "#FFFFFF",
+        "qr-bg-dark": "#FFFFFF",
+        "qr-fg": "#141414",
+        "qr-fg-dark": "#141414"
+      },
+      "font": {
+        "family": "Lato, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+        "size": "16px",
+        "launcherTitle": "3rem / 900",
+        "h1": "2rem / 900",
+        "h2": "1.5rem / 700",
+        "h3": "1.25rem / 700",
+        "label": "0.875rem / 700",
+        "badge": "0.75rem / 700"
+      },
+      "space": {
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "24px",
+        "6": "32px",
+        "7": "48px",
+        "8": "64px"
+      },
+      "radius": {
+        "button": "4px",
+        "card": "8px",
+        "banner": "12px"
+      }
+    },
+    "platform": {
+      "primary": "desktop",
+      "viewports": [
+        375,
+        1280
+      ]
+    },
+    "states": [
+      "empty",
+      "error",
+      "success",
+      "disabled"
+    ],
+    "content": {
+      "locale": "en-SG",
+      "currency": "SGD",
+      "dateFormat": "D MMM YYYY",
+      "tone": "clear and brief"
+    },
+    "navigation": "tabs",
+    "components": [
+      "App shell: white header with wordmark, role links, role avatar, Launcher, theme toggle and a menu below 992px",
+      "Footer band",
+      "Request journey rail (full and compact)",
+      "Buttons (primary, secondary, danger, alt card buttons)",
+      "Option tiles",
+      "Form fields with inline errors",
+      "Data table: guideline booking table, alternating shading, ID as the link, left-aligned",
+      "Status badge and chips (role, Submitted by you, Coming in v0N, Finance stub)",
+      "KPI tile",
+      "Chart (bar, donut)",
+      "Tabs",
+      "Modal",
+      "Toast",
+      "Gate checklist",
+      "Finance stub card",
+      "Workflow history timeline",
+      "Empty state",
+      "Digital membership card",
+      "Facts list",
+      "Blocked panel",
+      "Launcher: collapsible sections, module cards (live and planned), role cards, member tabs panel, demo data section",
+      "Scenario guide side panel",
+      "Report catalogue table with Export as buttons and Coming in v0N chips",
+      "Report parameters card",
+      "Report result: KPI tiles, one chart, table, no-data state",
+      "Export Excel and PDF buttons, print layout",
+      "Run history table",
+      "Report definitions form with version history",
+      "Legacy report finder",
+      "Report access checklist",
+      "Tee sheet tables by session with blocked rows",
+      "Golf booking with per-golfer check-in fields and charges",
+      "Waitlist with offers and Let offer expire",
+      "Course status cards and rain-check register",
+      "Golf administration tabs (tee sheets, settings, handicap import, PC records)",
+      "Shift close exception register",
+      "Portal golf booking card",
+      "Golf approvals tab",
+      "Launcher Module details button",
+      "Events schedule with confirmed against capacity",
+      "Event setup with completeness list",
+      "Event tabs (registrations, waitlist, attendance, viability, refunds, room)",
+      "Registration with hold banner and Pay (stub)",
+      "QR credential",
+      "Check-in by code with manual fallback",
+      "Function-room feed panel",
+      "Event refunds approvals tab",
+      "Report catalogue PDF and XLS buttons",
+      "Facilities availability grid (resources by hourly slot, blocks, flags)",
+      "Resource blocks table and form",
+      "Facility booking with rate line, counter payment methods and Pay (stub)",
+      "Bookings and waiting-list tables with Let offer expire",
+      "Admissions with occupancy meter, day pass and Personal Training",
+      "Bowling counter, reconciliation summary and exceptions",
+      "Facilities Admin tabs (facilities, resources, changes, Fitness Centre)",
+      "Facility refunds and configuration approvals tabs (Approve before Reject)",
+      "Portal Facilities card",
+      "Header Golf dropdown (Manager, Administrator)"
+    ],
+    "accessibility": {
+      "standard": "WCAG 2.2 AA",
+      "minTapTargetPx": 44
+    },
+    "visualReferences": [
+      {
+        "ref": "NSRCC Brand Guideline design canvas (claude.ai artifact)",
+        "shows": "Brand purple scale, neutrals, semantic colours, booking chips, Lato type, UI kit, header and footer bands, Bootstrap mapping",
+        "use": "Every colour token, Lato, radii, shadows, the stepper (journey rail), avatar, booking chips, footer band, buttons, option tiles, fields, tables, banners and toasts (design pass 3, D-247, D-248)"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/output/rapid-build-v09/prototype/index.html",
+        "shows": "The approved v09 launcher and page look",
+        "use": "Layout and components kept: CC-Demo name, collapsible sections, module cards, scenario guide"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/input/GMS/nsrcc-brand-guideline.md",
+        "shows": "NSRCC web brand: purple palette, neutrals, semantic colours, radii, components",
+        "use": "Colour tokens, radii, button and card styles"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/output/full-build-v02/mockups/index.html",
+        "shows": "The approved v02 full build (design pass 3 with the reporting components)",
+        "use": "Every page and component kept; golf pages built in the same system"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/output/full-build-v03/mockups/index.html",
+        "shows": "The approved v03 full build (design pass 3 with the reporting and golf components)",
+        "use": "Every page and component kept; event pages built in the same system"
+      }
+    ]
+  }
+}

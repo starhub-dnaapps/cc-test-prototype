@@ -1,0 +1,137 @@
+<!doctype html>
+<!-- My Membership · CC-Demo · Build: full-build-v08 · Version: v08 · KO: KO-037 · from v07
+     From agent/reference/templates/page.html; layout rules Layout-01 to Layout-15; logic in js/rules.js, js/workflow.js and js/app.js. -->
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>My Membership · CC-Demo</title>
+  <script>try { var t = localStorage.getItem("ccdemo-theme"); } catch (e) {} document.documentElement.setAttribute("data-bs-theme", t === "dark" ? "dark" : "light");</script>
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="portal">
+
+  <header class="app-header navbar navbar-expand-xl">
+    <div class="container cluster cluster--between">
+      <a class="navbar-brand brand" href="index.html"><span class="brand__tile" aria-hidden="true">C</span><span class="brand__mark">CC-Demo</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Show the menu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse cluster cluster--between" id="main-nav">
+      <nav class="nav app-nav" aria-label="Main">
+        <a class="nav-link" href="dashboard.html" data-roles="officer approver manager admin">Dashboard</a>
+        <a class="nav-link" href="members.html" data-roles="officer approver manager admin">Members</a>
+        <a class="nav-link" href="approvals.html" data-roles="approver manager">Approvals</a>
+        <a class="nav-link" href="requests.html" data-roles="officer approver manager admin">Requests</a>
+        <a class="nav-link" href="application.html" data-roles="officer">New Application</a>
+        <a class="nav-link" href="request-new.html" data-roles="officer admin">New Request</a>
+        <a class="nav-link" href="communications.html" data-roles="officer manager">Communications</a>
+        <a class="nav-link" href="config.html" data-roles="admin">Configuration</a>
+        <a class="nav-link" href="integrations.html" data-roles="officer admin events">Integration Feed</a>
+        <a class="nav-link" href="golf-teesheet.html" data-roles="golfops">Tee Sheet</a>
+        <a class="nav-link" href="golf-waitlist.html" data-roles="golfops">Waitlist</a>
+        <a class="nav-link" href="golf-course.html" data-roles="golfops">Course Control</a>
+        <a class="nav-link" href="golfers.html" data-roles="golfops">Golfers</a>
+        <a class="nav-link" href="golf-close.html" data-roles="golfops">Shift Close</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Golf</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="golf-teesheet.html">Tee Sheet</a></li><li data-roles="manager"><a class="dropdown-item" href="golf-course.html">Course Control</a></li><li data-roles="manager admin"><a class="dropdown-item" href="golfers.html">Golfers</a></li><li data-roles="admin"><a class="dropdown-item" href="golf-admin.html">Golf Admin</a></li></ul></div>
+        <a class="nav-link" href="events.html" data-roles="events manager golfops">Events</a>
+        <a class="nav-link" href="event-rooms.html" data-roles="events">Function Rooms</a>
+        <a class="nav-link" href="facilities.html" data-roles="facilities manager">Facilities</a>
+        <a class="nav-link" href="facility-bookings.html" data-roles="facilities">Bookings</a>
+        <a class="nav-link" href="facility-admission.html" data-roles="facilities">Admissions</a>
+        <a class="nav-link" href="bowling.html" data-roles="facilities">Bowling</a>
+        <a class="nav-link" href="facility-admin.html" data-roles="admin">Facilities Admin</a>
+        <a class="nav-link" href="resort-desk.html" data-roles="resorts">Front desk</a>
+        <a class="nav-link" href="resort-rooms.html" data-roles="resorts housekeeping">Rooms</a>
+        <a class="nav-link" href="resort-audit.html" data-roles="resorts">Night Audit</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Resorts</a>
+          <ul class="dropdown-menu"><li data-roles="manager"><a class="dropdown-item" href="resort-desk.html">Front desk</a></li><li data-roles="manager"><a class="dropdown-item" href="resort-rooms.html">Rooms</a></li><li data-roles="manager admin"><a class="dropdown-item" href="resort-audit.html">Night Audit</a></li><li data-roles="admin"><a class="dropdown-item" href="resort-config.html">Resort config</a></li></ul></div>
+        <a class="nav-link" href="finance.html" data-roles="finance finapprover">Finance home</a>
+        <a class="nav-link" href="fin-approvals.html" data-roles="finapprover">Approvals</a>
+        <div class="nav-item dropdown" data-roles="finance finapprover manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Finance</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="finance.html">Finance home</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-events.html">Financial events</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-accounts.html">Member accounts</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-collections.html">Collections</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-refunds.html">Refunds and adjustments</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recognition.html">Revenue recognition</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recon.html">Reconciliation and exceptions</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-posting.html">Periods and posting</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-dunning.html">Dunning</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-ar.html">General AR</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-config.html">Finance configuration</a></li><li data-roles="finance"><a class="dropdown-item" href="fin-approvals.html">Finance approvals</a></li></ul></div>
+        <a class="nav-link" href="reports.html" data-roles="officer golfops facilities resorts finance finapprover manager admin">Reports</a>
+        <a class="nav-link" href="portal.html" data-roles="member">My Membership</a>
+      </nav>
+      <div class="cluster">
+        <span class="role-avatar"><span class="role-avatar__initials" aria-hidden="true" data-role-initials>CC</span><span data-role-label>No role</span></span>
+        <a class="btn btn-sm btn-outline-secondary" href="index.html">Launcher</a>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-theme-toggle aria-label="Switch light or dark theme">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main data-scenario="S8" class="container stack stack--sections" id="main">
+    <div class="page-header">
+      <div class="stack"><h1 id="portal-name">My membership</h1><p class="text-muted">Your card, your membership and your requests.</p></div>
+      
+    </div>
+    <div class="row"><div class="col-lg-5" id="portal-card"></div><div class="col-lg-7"><article class="card card-body stack"><h2 class="h3">Membership</h2><dl class="facts" id="portal-facts"></dl></article></div></div>
+    <section class="stack" aria-labelledby="golf-h" id="portal-golf-section"><h2 id="golf-h">Golf</h2><span class="eyebrow" data-golf-clock>Demo clock</span><p class="text-muted">Book a tee time for yourself, other members and up to 3 guests. Online booking closes 2 hours before tee-off (BR-037).</p>
+      <article class="card card-body stack"><h3 class="h5">Book a tee time</h3>
+        <form class="form-grid" id="tee-form" novalidate>
+          <div class="field"><label class="form-label" for="tee-course">Course</label><select class="form-select" id="tee-course" name="course"><option value="Changi">Changi</option><option value="Kranji">Kranji</option></select></div>
+          <div class="field"><label class="form-label" for="tee-date">Date</label><input class="form-control" id="tee-date" name="date" type="date"></div>
+          <div class="field"><label class="form-label" for="tee-time">Tee time</label><select class="form-select" id="tee-time" name="time"></select></div>
+          <div class="form-grid field--full" data-players></div>
+          <p class="alert alert-warning field--full" id="tee-err" role="alert" hidden></p>
+          <div class="btn-row"><button type="button" class="btn btn-outline-secondary" id="tee-wl" hidden>Join the waitlist</button><button type="submit" class="btn btn-primary">Book tee time</button></div>
+        </form>
+      </article>
+    </section>
+    <section class="stack" aria-labelledby="pg-h"><h3 class="h5" id="pg-h">My golf bookings</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-golf"><thead><tr><th scope="col">Booking</th><th scope="col">Tee time</th><th scope="col">Golfers</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="stack" aria-labelledby="pw-h"><h3 class="h5" id="pw-h">Waitlist</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-wl"><thead><tr><th scope="col">Entry</th><th scope="col">Tee time</th><th scope="col" class="num">Party</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="stack" aria-labelledby="prc-h"><h3 class="h5" id="prc-h">My rain checks</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-rc"><thead><tr><th scope="col">Rain check</th><th scope="col" class="num">Holes</th><th scope="col" class="num">Valid to</th><th scope="col" class="col-status">Status</th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="stack" aria-labelledby="pev-h" id="portal-events-section"><h2 id="pev-h">Events</h2><p class="text-muted">Register yourself and your dependants; pay (simulated) and get a receipt from FIN-OPS; show the QR credential at the event.</p>
+      <div class="stack"><h3 class="h5">Open events</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-ev-open"><thead><tr><th scope="col">Event</th><th scope="col" class="num">When</th><th scope="col">Price</th><th scope="col" class="num">Places left</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div></div>
+      <div class="stack"><h3 class="h5">My event registrations</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-ev"><thead><tr><th scope="col">Registration</th><th scope="col">Event</th><th scope="col">Participants</th><th scope="col">QR credentials</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div></div>
+    </section>
+    <section class="stack" aria-labelledby="pfa-h" id="portal-facilities-section"><h2 id="pfa-h">Facilities</h2><span class="eyebrow" data-golf-clock>Demo clock</span><p class="text-muted">Book courts, tables and rooms you may use; pay (simulated) and get a receipt from FIN-OPS; cancel at least 24 hours ahead for a full refund (BR-095).</p>
+      <article class="card card-body stack"><h3 class="h5">Book a facility</h3><form class="form-grid" id="pf-form" novalidate><p class="alert alert-warning field--full" role="alert" id="pf-err" hidden></p><div class="field"><label class="form-label" for="pf-facility">Facility</label><select class="form-select" id="pf-facility" name="facility"></select></div><div class="field"><label class="form-label" for="pf-date">Date</label><input class="form-control" id="pf-date" name="date" type="date"></div><div class="field"><label class="form-label" for="pf-start">Start</label><select class="form-select" id="pf-start" name="start"></select></div><div class="field"><label class="form-label" for="pf-hours">Hours</label><select class="form-select" id="pf-hours" name="hours"></select></div><p class="alert alert-info field--full mb-0" id="pf-rate" role="status"></p><div class="btn-row field--full"><button type="button" class="btn btn-outline-secondary" id="pf-join" hidden>Join the waiting list</button><button type="submit" class="btn btn-primary">Continue</button></div></form></article>
+      <h3 class="h5">My facility bookings</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-fb"><thead><tr><th scope="col">Booking</th><th scope="col" class="num">When</th><th scope="col">Where</th><th scope="col" class="num">Amount</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="stack" aria-labelledby="pfw-h" id="portal-facilities-wl"><h3 class="h5" id="pfw-h">My waiting list</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-fw"><thead><tr><th scope="col">Entry</th><th scope="col">Slot</th><th scope="col" class="col-status">Status</th><th scope="col">Offer until</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="stack" aria-labelledby="pr-h"><h2 id="pr-h">My requests</h2>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-requests"><thead><tr><th scope="col">Request</th><th scope="col">Type</th><th scope="col">Journey</th><th scope="col" class="col-status">Status</th><th scope="col" class="num">Created</th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <div class="grid grid--subgrid grid--rows-2"><article class="card card-body stack"><h2 class="h3">Renew</h2><form class="stack" id="renew-form" novalidate><fieldset class="field"><legend class="form-label">Package</legend><div class="grid" id="years-tiles"></div></fieldset><p class="text-muted" id="renew-preview"></p><p class="alert alert-danger" id="renew-err" role="alert" data-state="error" hidden></p><div class="btn-row btn-row--start"><button type="submit" class="btn btn-primary">Submit renewal</button></div></form></article><article class="card card-body stack"><h2 class="h3">My details</h2><form class="stack" id="portal-profile" novalidate><div class="field"><label class="form-label required" for="mobile">Mobile</label><input class="form-control" id="mobile" name="mobile" type="text"></div><div class="field"><label class="form-label required" for="email">Email</label><input class="form-control" id="email" name="email" type="email"></div><div class="field"><label class="form-label required" for="address">Address</label><input class="form-control" id="address" name="address" type="text"></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="pmc" name="marketingConsent"><label class="form-check-label" for="pmc">Send me club news and offers</label></div><p class="alert alert-danger" id="profile-err" role="alert" data-state="error" hidden></p><div class="btn-row btn-row--start"><button type="submit" class="btn btn-primary">Save my details</button></div></form></article><article class="card card-body stack"><h2 class="h3">Withdraw</h2><form class="stack" id="withdraw-form" novalidate><p class="text-muted">Your balance is cleared first; the unused term is not refunded.</p><div class="field"><label class="form-label" for="wreason">Reason (optional)</label><textarea class="form-control" id="wreason" name="reason" rows="2"></textarea></div><p class="alert alert-danger" id="withdraw-err" role="alert" data-state="error" hidden></p><div class="btn-row btn-row--start"><button type="submit" class="btn btn-outline-danger">Withdraw membership</button></div></form></article></div>
+    <section class="stack" aria-labelledby="pres-h" id="portal-resorts-section"><h2 id="pres-h">Resorts</h2><div class="alert alert-light border cluster mb-0" role="note"><span class="badge badge-hold">Draft – for validation</span><span>Resort rules and values are demo values from a draft source pack (D-348).</span></div><p class="text-muted">Reserve a chalet or villa within your membership's window and maximum stay; pay a 50 % deposit (simulated, recorded in FIN-OPS). More than 21 days before arrival a cancellation costs 50 %, later 100 % (BR-115). Group reservations and holds are made at the front desk.</p>
+      <div class="btn-row btn-row--start"><a class="btn btn-primary" href="resort-reservation.html">Reserve a room</a></div>
+      <h3 class="h5">My resort reservations</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-rres"><thead><tr><th scope="col">Reservation</th><th scope="col">Room</th><th scope="col" class="num">Stay</th><th scope="col" class="num">Balance</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section class="stack" aria-labelledby="prw-h" id="portal-resorts-wl">      <h3 class="h5" id="prw-h">My resort waitlist</h3>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="portal-rwait"><thead><tr><th scope="col">Entry</th><th scope="col">Room type · dates</th><th scope="col" class="num">Joined</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div>
+      <p class="text-muted mb-0">Staff choose who gets a freed room; joining holds nothing (BR-117).</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container cluster cluster--between"><strong>CC-Demo</strong><span>Version 8: all seven modules (Membership, Club Reporting, Golf, Events, Facilities, Resorts and Finance). All data is invented.</span></div>
+  </footer>
+
+  <div class="toast-host" aria-live="polite"></div>
+  <script src="vendor/bootstrap.bundle.min.js"></script>
+  <script src="data/seed.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/workflow.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

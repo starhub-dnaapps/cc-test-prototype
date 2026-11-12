@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- Self-check · CC-Demo · Build: full-build-v08 · Version: v08 · KO: KO-037 · from v07
+     Runs js/checks.js against a copy of the seed; never changes the stored data. Not linked from the app. -->
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Self-check · CC-Demo</title>
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <main class="container stack stack--sections" id="main">
+    <div class="page-header"><div class="stack"><h1>Self-check</h1><p class="text-muted" id="summary"></p></div></div>
+    <div class="table-wrap"><table class="table" id="results"><thead><tr><th scope="col">Rule or action</th><th scope="col">Check</th><th scope="col" class="col-status">Result</th></tr></thead><tbody></tbody></table></div>
+  </main>
+  <script src="data/seed.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/workflow.js"></script>
+  <script src="js/checks.js"></script>
+  <script>
+    document.getElementById("summary").textContent = Checks.passed + " of " + Checks.results.length + " checks pass";
+    document.querySelector("#results tbody").innerHTML = Checks.results.map(function (c) {
+      var t = c.ok ? "success" : "danger";
+      return '<tr><td data-label="Rule or action">' + c.id + '</td><td data-label="Check">' + c.name.replace(/</g, "&lt;") + '</td><td data-label="Result" class="col-status"><span class="badge text-' + t + "-emphasis bg-" + t + '-subtle">' + (c.ok ? "Pass" : "Fail") + "</span></td></tr>";
+    }).join("");
+  </script>
+</body>
+</html>

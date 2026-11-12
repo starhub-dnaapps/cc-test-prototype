@@ -1,0 +1,765 @@
+{
+  "title": "CC-Demo club management system: Golf module (v03)",
+  "pm": {
+    "problem": "NSRCC runs golf at Changi and Kranji on a legacy system that keeps its own copy of golfer data, checks eligibility by hand at the counter and settles charges outside any audit trail. The To-Be design (GMS) needs tee sheets, online and counter booking, a fair automated waitlist, check-in that releases only eligible and insured golfers, rain checks, handicap imports, capacity blocks and a shift close, all reading member status from Membership and handing money to Finance. Golf is built here on the Membership and Club Reporting base, reusing member data and eligibility.",
+    "users": [
+      {
+        "role": "Golf Operations",
+        "goal": "Run the tee sheet, counter bookings, waitlist, check-in, late arrivals, blocks and the shift close; run the golf reports",
+        "context": "Golf counter, all day",
+        "device": "desktop"
+      },
+      {
+        "role": "Member",
+        "goal": "Book a tee time online, answer waitlist offers, cancel and see rain checks",
+        "context": "Home or on the move",
+        "device": "both"
+      },
+      {
+        "role": "Membership Manager (as Golf Manager and Club Captain)",
+        "goal": "Approve waivers, extensions and second rounds; suspend and reopen a course; read all golf reports",
+        "context": "Office or on course",
+        "device": "desktop"
+      },
+      {
+        "role": "Membership Administrator (as Golf Administrator)",
+        "goal": "Publish tee sheets, import handicaps, keep NSRCC PC records",
+        "context": "Office",
+        "device": "desktop"
+      }
+    ],
+    "decision": {
+      "type": "validate",
+      "question": "Should we build Golf (tee sheets, booking and waitlist, check-in, rain checks, eligibility imports, capacity blocks, shift close, golf reports) on the Membership and Club Reporting base, reusing member data and eligibility?"
+    },
+    "scenarios": "Feature: CC-Demo Golf (v03)\n\nScenario: Member books a weekday flight with a guest (Story-111, BR-037 – 043)\n  Given Member D. Koh (KD10004, Ordinary Basic, Active)\n  When D. Koh books a weekday Changi tee time for a flight of 2 with a guest who holds a handicap\n  Then the booking is Confirmed with D. Koh as the guest's responsible payer\n  And a confirmation is in the outbox\n\nScenario: Basic Member cannot book a weekend independently (Story-111, BR-041)\n  When D. Koh tries to book a Saturday tee time as main booker\n  Then the booking is refused with the BR-041 message\n\nScenario: Released capacity goes to the earliest entry that fits (Story-112, BR-044)\n  Given a full tee time with waiting entries for a party of 4, then a party of 2\n  When a 2-golfer booking is cancelled with more than 72 hours' notice\n  Then no charge is raised\n  And the party of 4 is skipped and the party of 2 gets a 15-minute offer\n\nScenario: Late cancellation is charged (Story-113, BR-046)\n  When a booking is cancelled with less than 72 hours' notice\n  Then the late-cancellation charge is raised on the main booker\n\nScenario: A suspended member cannot check in (Story-114, BR-040)\n  Given YB10024 is Suspended in Membership\n  When Golf Operations checks the golfer in\n  Then check-in is refused with the BR-040 message\n\nScenario: Suspension issues rain checks or the refund path (Story-116, BR-052, BR-053, BR-054)\n  Given golfers on Changi who had not teed off, who were mid front nine, and 18-hole golfers who cannot cross over\n  When the Manager suspends Changi for lightning\n  Then golfers who had not teed off get the refund path\n  And the others get a 9-hole rain check valid 1 month, not transferable\n\nScenario: Faulty extract rows become exceptions (Story-117, BR-056)\n  Given the sample handicap extract with 2 faulty rows\n  When the Administrator stages and validates it\n  Then the 2 rows are exceptions and the rest become effective\n  And the previous values stay in history\n\nScenario: Blocked tee times cannot be booked (Story-118, BR-057)\n  Given a Changi morning blocked for maintenance with its reason and source\n  When Golf Operations or a Member tries to book a blocked tee time\n  Then the booking is refused and the tee sheet shows the reason and source",
+    "successCriteria": [
+      "No member record is created or copied by Golf: golfers reference the existing persons and memberships (0 copies)",
+      "No booking or release to play for a golfer who fails the eligibility, flight, guest, handicap or insurance rules (0 cases, BR-040 to 043, BR-049)",
+      "No released tee time offered out of waitlist order or to a party that does not fit (0 cases, BR-044)",
+      "No balance stored in GMS, and no missing or rejected Finance status cleared at shift close (0 cases, BR-059, BR-060)",
+      "Reviewers run the v03 scenarios and the kept v01 and v02 scenarios end to end with the scenario guide (30 of 30)"
+    ],
+    "businessRules": [
+      "BR-001: When a membership is activated, then it gets a unique Membership ID of 2 initials + 5 digits",
+      "BR-002: When a Person already has an open application for the same membership type and purpose, then a new one is blocked",
+      "BR-003: When an application is assessed, then the applicant must meet the eligibility of the type (adult types ≥ 21, Junior 5–20, Corporate: Singapore-registered company)",
+      "BR-004: When a request is submitted for approval, then every mandatory document of its type must be attached",
+      "BR-005: When a request is decided, then only an Approver (or the Manager where routed) may decide, and never the person who submitted it",
+      "BR-006: When a fee applies to an approved request, then it completes only after Finance confirms payment; a failed payment leaves it Awaiting Payment",
+      "BR-007: When an application is saved, then a recruitment source is required, and referrer details are required when the source is Referral",
+      "BR-008: When a renewal, conversion or extension would take combined Associate + Ordinary duration over 30 years (absent periods excluded), then it is blocked",
+      "BR-009: When a renewal is requested, then it must come from the member and the membership must be Active (or Absent / Medical)",
+      "BR-010: When Full converts to Basic, then remaining months × 2; when Basic converts to Full, then remaining months ÷ 2, rounded down",
+      "BR-011: When a transfer is requested, then the type must be transferable (Corporate is not) and the recipient must meet the type's eligibility",
+      "BR-012: When an extension is requested, then it may not exceed 24 months; ≤ 12 months goes to an Approver, > 12 months to the Manager",
+      "BR-013: When a withdrawal completes, then Finance must have cleared the balance, no refund of the remaining term is made, and the status becomes Withdrawn",
+      "BR-014: When the expiry date passes with no approved renewal, then the status becomes Expired; an approved rejoin reactivates with the original Membership ID",
+      "BR-015: When a deceased case proposes a goodwill refund, then only the Manager may approve it, and only then is it sent to Finance",
+      "BR-016: When an absent period is requested, then it must be 3–24 months and must not overlap an approved absent period; the term is suspended for it",
+      "BR-017: When a medical period is requested, then it may not exceed 12 months, and the expiry date is not changed",
+      "BR-018: When a status change is requested, then it is allowed only if the transition matrix permits it; a membership has exactly one current status",
+      "BR-019: When the status is Active, then privileges and billing are on; Absent / Medical: privileges off, billing per policy; Suspended: privileges off, billing on; other statuses: both off",
+      "BR-020: When a supplementary membership is created, then its principal must be Active; when the principal ends, the supplementary ends too",
+      "BR-021: When a junior member reaches 21, then junior eligibility ends; nothing converts automatically",
+      "BR-022: When a corporate nominee is assigned, then active nominees may not exceed the type's limit; a new corporate membership needs the Administrator",
+      "BR-023: When credit is checked, then available credit = In-House Credit Limit − Finance outstanding balance; if the Finance balance is unavailable, the check is blocked; Spending Credit Granted never changes",
+      "BR-024: When a vehicle is registered, then the membership must be Active and have fewer than 4 active vehicles",
+      "BR-025: When a card is issued, then the membership must be Active; the digital card is primary; a replacement voids the previous card",
+      "BR-026: When a marketing campaign is sent, then persons who withheld marketing consent are excluded; service correspondence is not affected",
+      "BR-027: When an active member's profile is saved, then mandatory fields (name, ID, date of birth, mobile, email, address) must be filled",
+      "BR-028: When a configuration value is referenced by a record, then it can be made inactive but not deleted",
+      "BR-029: When a request is approved, then its fee is read from the fee configuration of the type and event; no fee is requested before approval",
+      "BR-030: When a referred application completes, then a referral reward is raised only if an active referral campaign exists",
+      "BR-031: When a user opens the report catalogue or runs, exports or defines a report, then only the reports and data scope their role's access rule allows are offered; audit and workflow-history reports are restricted further",
+      "BR-032: When a report is run, then every required parameter must be given and valid, and the output is limited to the selected criteria",
+      "BR-033: When a report run matches no records, then a valid no-data result is shown without error; a run never changes a source record",
+      "BR-034: When a generated report is exported, then only a report designated for export may be, as Excel or PDF, with exactly the rows and scope shown on screen",
+      "BR-035: When a user-defined report is saved, then it builds on an approved report, cannot widen the role's data scope, and gets a new version with an effective date; earlier runs keep their version",
+      "BR-036: When a tee-sheet period is prepared, then tee times are generated per course (Changi, Kranji), day type and session from the configuration, and 9-hole play is allowed only in the weekday 07:01 – 07:57 period, never on weekend or public-holiday mornings",
+      "BR-037: When a tee time is booked online, then the request must fall inside the booking window and at least 2 hours before tee-off; staff-assisted booking may go later",
+      "BR-038: When a golfer is booked, then they hold no other session that day (an active waitlist entry counts); a second same-day 18-hole round needs Golf Manager approval with a reason",
+      "BR-039: When a flight is booked, then it has at most 4 golfers and at least 2 on weekdays or 3 on weekends and public holidays; a single golfer joins an existing flight instead of opening an invalid solo flight",
+      "BR-040: When a golfer uses member privileges, then their membership or nominee status from MMS must be Active with golf privilege; a suspended member cannot book or play",
+      "BR-041: When a Basic Member books, then they play weekdays independently, and on weekends only in a flight whose main booker is an eligible Full Member",
+      "BR-042: When guests are added, then the introducer is at least 18 and plays in the same flight, brings at most 3 guests, each guest holds a recognised handicap, and no guest plays at Changi on Saturday afternoon without approval",
+      "BR-043: When eligibility is checked, then on weekends and public holidays male HI ≤ 24.4 and female HI ≤ 36.4 play at any time; male 24.5 – 36.4, female 36.5 – 40.4 and NSRCC PC holders play weekdays or from 16:30; an external PC does not count",
+      "BR-044: When capacity is released, then it is offered first to the earliest waitlist entry whose party fits, held for 15 minutes; on decline or expiry the next entry gets it, and only then does it return to general availability",
+      "BR-045: When a booking is amended, then a player substitution carries the substitution fee, and a course change is allowed only with equivalent capacity at the other course and carries the course-change fee",
+      "BR-046: When a booking is cancelled with less than 72 hours' notice, then the late-cancellation charge (based on the course green fee) is raised on the booking member",
+      "BR-047: When an amendment, cancellation, no-show, fee or rain-check exception is waived or extended, then a Golf Manager approves it with a reason (and evidence where required); the requester cannot approve it",
+      "BR-048: When a golfer checks in, then it is at least 15 minutes before tee-off; later arrivals go to the late-arrival treatment",
+      "BR-049: When a golfer is released to play, then membership or guest eligibility, handicap or NSRCC PC, insurance (existing, annual or MSIG day insurance) and the 9 / 18-hole declaration are all satisfied, and the charge outcome is accepted",
+      "BR-050: When a guest claims a special rate without Guest Eligibility Proof, then the sign-in guest rate applies; proof produced within 7 working days allows an adjustment",
+      "BR-051: When a golfer is late, then they are rescheduled to a later free tee time if one exists, else joined by skipping holes if Golf Operations permits, else treated as a no-show with the no-show charge",
+      "BR-052: When a course is suspended or closed, then only the Club Captain, Vice-Captain, Golf Manager or an approved executive may do it; golfers who had not teed off get the green and buggy fee refund path, not a rain check",
+      "BR-053: When a qualifying suspension interrupts a golfer who has teed off before completing the first 9, or an 18-hole golfer who cannot cross over, then a 9-hole rain check is issued",
+      "BR-054: When a rain check is issued, then it is valid for 1 month, linked to the golfer, not transferable and has no cash value; an extension needs approval (BR-047)",
+      "BR-055: When a 9-hole rain check is applied to an 18-hole booking, then the golfer pays the top-up; a cheaper booking gives no residual refund",
+      "BR-056: When a handicap extract is imported, then it is staged and validated (identifier, gender, HI range) before it replaces the effective data; failing rows become exceptions and the prior values stay in history",
+      "BR-057: When capacity is blocked for maintenance, an HMS event, private use, a programme or management, then those tee times cannot be booked, keep their reason and source reference, and on release go to the waitlist first",
+      "BR-058: When golf charges are raised, then the rate comes from course, player category, 9 / 18 holes and day type, and every chargeable golfer has a responsible payer (member, introducing member for guests, corporate account, or self)",
+      "BR-059: When a golf charge is handed to Finance, then GMS keeps the Finance status (pending, accepted, rejected); member in-house credit needs Finance-derived eligibility (BR-023); GMS never stores a balance",
+      "BR-060: When a shift or day is closed, then counts and totals are compiled from GMS records, and unresolved exceptions and events without a Finance status stay flagged, never silently cleared",
+      "BR-084: When a page opens in a tab, then it renders only if the tab's role is one the page lists; otherwise it shows no content, and every link to a page the role cannot open is plain text, not a link",
+      "BR-085: When a Member tab reads member data, then it reads only its own account (membership, requests, golf bookings, rain checks, event registrations), set once from the launcher",
+      "BR-171: When an application or profile is saved, then the email must be a valid address and the mobile a Singapore number (+65, 8 digits, starting 8 or 9)",
+      "BR-172: When dates are entered, then the date of birth is not in the future, and a period's end date is after its start date",
+      "BR-173: When the first fee of a new or rejoining membership is confirmed paid in a month, then the membership starts on the 1st of the next month",
+      "BR-174: When a membership starts or is renewed, then its expiry = start date + the type's term in months (from configuration), moved out by approved absent months (BR-016)",
+      "BR-175: When a request is Submitted, then it is read-only until it is returned for correction or decided; only a Draft or Pending Documents request can be edited",
+      "BR-176: When a request is rejected or returned, then a reason is required",
+      "BR-177: When a material action happens (create, submit, decide, pay, apply, status change, configuration change), then a history entry records actor, role, time, from and to status, and comment; entries are never edited or deleted",
+      "BR-178: When a fee request is waiting at Payment pending in v01, then only an Approver may record payment through the labelled Finance stub; nothing marks a payment confirmed by itself"
+    ],
+    "dataEntities": [
+      {
+        "name": "persons",
+        "fields": [
+          "id",
+          "fullName",
+          "idType",
+          "idNumber",
+          "dateOfBirth",
+          "mobile",
+          "email",
+          "address",
+          "nationality",
+          "marketingConsent"
+        ]
+      },
+      {
+        "name": "memberships",
+        "fields": [
+          "membershipId",
+          "personId",
+          "typeCode",
+          "status",
+          "joinedDate",
+          "startDate",
+          "expiryDate",
+          "absentPeriods",
+          "medicalPeriods",
+          "responsibleMembershipId",
+          "sponsorName",
+          "nominees",
+          "classification",
+          "transferredFrom",
+          "contract",
+          "recruitmentSource",
+          "referrerMembershipId"
+        ]
+      },
+      {
+        "name": "requests",
+        "fields": [
+          "id",
+          "type",
+          "membershipId",
+          "personId",
+          "status",
+          "createdBy",
+          "createdByName",
+          "createdAt",
+          "submittedAt",
+          "route",
+          "details",
+          "documents",
+          "fee",
+          "decision",
+          "history"
+        ]
+      },
+      {
+        "name": "handoffs",
+        "fields": [
+          "id",
+          "requestId",
+          "membershipId",
+          "kind",
+          "description",
+          "amount",
+          "status",
+          "via",
+          "stubRef",
+          "recordedBy",
+          "createdAt"
+        ]
+      },
+      {
+        "name": "financeStub",
+        "fields": [
+          "available",
+          "outstanding"
+        ]
+      },
+      {
+        "name": "vehicles",
+        "fields": [
+          "id",
+          "membershipId",
+          "plate",
+          "make",
+          "status",
+          "labelHistory"
+        ]
+      },
+      {
+        "name": "cards",
+        "fields": [
+          "id",
+          "membershipId",
+          "kind",
+          "issued",
+          "status",
+          "reason"
+        ]
+      },
+      {
+        "name": "outbox",
+        "fields": [
+          "id",
+          "at",
+          "template",
+          "kind",
+          "recipient",
+          "ref",
+          "status"
+        ]
+      },
+      {
+        "name": "integrationEvents",
+        "fields": [
+          "id",
+          "at",
+          "target",
+          "event",
+          "ref",
+          "stub"
+        ]
+      },
+      {
+        "name": "audit",
+        "fields": [
+          "id",
+          "at",
+          "actor",
+          "role",
+          "action",
+          "ref",
+          "outcome",
+          "before",
+          "after"
+        ]
+      },
+      {
+        "name": "modules",
+        "fields": [
+          "code",
+          "name",
+          "builtIn",
+          "status",
+          "summary"
+        ]
+      },
+      {
+        "name": "config",
+        "fields": [
+          "membershipTypes",
+          "fees",
+          "limits",
+          "documents",
+          "transitions",
+          "privileges",
+          "recruitmentSources",
+          "templates",
+          "campaigns",
+          "golf"
+        ]
+      },
+      {
+        "name": "reports",
+        "fields": [
+          "id",
+          "name",
+          "answers",
+          "module",
+          "area",
+          "params",
+          "exportable",
+          "audit",
+          "plannedIn",
+          "legacy"
+        ]
+      },
+      {
+        "name": "accessRules",
+        "fields": [
+          "officer",
+          "manager",
+          "admin",
+          "golfops"
+        ]
+      },
+      {
+        "name": "reportRuns",
+        "fields": [
+          "id",
+          "report",
+          "definition",
+          "version",
+          "params",
+          "by",
+          "role",
+          "at",
+          "rows",
+          "exports"
+        ]
+      },
+      {
+        "name": "definitions",
+        "fields": [
+          "id",
+          "name",
+          "base",
+          "status",
+          "versions"
+        ]
+      },
+      {
+        "name": "dashboards",
+        "fields": [
+          "id",
+          "name",
+          "roles",
+          "tiles",
+          "charts"
+        ]
+      },
+      {
+        "name": "legacyReports",
+        "fields": [
+          "id",
+          "name",
+          "inventory",
+          "outputType",
+          "disposition",
+          "successor",
+          "owner",
+          "note"
+        ]
+      },
+      {
+        "name": "courses",
+        "fields": [
+          "code",
+          "name",
+          "status",
+          "statusBy",
+          "statusAt",
+          "reason"
+        ]
+      },
+      {
+        "name": "teeSheets",
+        "fields": [
+          "course",
+          "date",
+          "status",
+          "publishedBy"
+        ]
+      },
+      {
+        "name": "golfers",
+        "fields": [
+          "personId",
+          "gender",
+          "hi",
+          "sgaNo",
+          "pc",
+          "insurance",
+          "hiHistory"
+        ]
+      },
+      {
+        "name": "guests",
+        "fields": [
+          "id",
+          "name",
+          "gender",
+          "hi",
+          "category",
+          "proof",
+          "insurance"
+        ]
+      },
+      {
+        "name": "golfBookings",
+        "fields": [
+          "id",
+          "course",
+          "date",
+          "time",
+          "session",
+          "dayType",
+          "mainBooker",
+          "players",
+          "channel",
+          "bookedAt",
+          "status",
+          "amendments",
+          "cancelledAt",
+          "lateCancellation",
+          "rainCheckId"
+        ]
+      },
+      {
+        "name": "courseBlocks",
+        "fields": [
+          "id",
+          "course",
+          "date",
+          "session",
+          "purpose",
+          "reason",
+          "source",
+          "status",
+          "by",
+          "at"
+        ]
+      },
+      {
+        "name": "waitlist",
+        "fields": [
+          "id",
+          "course",
+          "date",
+          "time",
+          "party",
+          "mainBooker",
+          "players",
+          "joinedAt",
+          "status",
+          "offer"
+        ]
+      },
+      {
+        "name": "rainChecks",
+        "fields": [
+          "id",
+          "personId",
+          "holes",
+          "issued",
+          "expiry",
+          "source",
+          "status",
+          "extension",
+          "bookingId"
+        ]
+      },
+      {
+        "name": "golfApprovals",
+        "fields": [
+          "id",
+          "kind",
+          "ref",
+          "amount",
+          "reason",
+          "requestedBy",
+          "at",
+          "status",
+          "decidedBy",
+          "decidedAt",
+          "decisionReason"
+        ]
+      },
+      {
+        "name": "golfExceptions",
+        "fields": [
+          "id",
+          "personId",
+          "guestId",
+          "type",
+          "basis",
+          "raised",
+          "status",
+          "approvedBy",
+          "approvedAt",
+          "reason"
+        ]
+      },
+      {
+        "name": "handicapImports",
+        "fields": [
+          "id",
+          "at",
+          "by",
+          "rows",
+          "accepted",
+          "rejected",
+          "status"
+        ]
+      },
+      {
+        "name": "shiftCloses",
+        "fields": [
+          "id",
+          "date",
+          "by",
+          "at",
+          "counts",
+          "flagged"
+        ]
+      },
+      {
+        "name": "golfCharges",
+        "fields": [
+          "id",
+          "bookingId",
+          "course",
+          "date",
+          "personId",
+          "guestId",
+          "category",
+          "type",
+          "amount",
+          "payer",
+          "finance",
+          "financeRef"
+        ]
+      }
+    ],
+    "scope": {
+      "in": [
+        "Golf: tee sheet setup and publication, golf booking in the Portal and at the counter, automated waitlist with 15-minute offers, amend and cancel with fees and the 72-hour rule, check-in and release to play, late arrival and no-show, course suspension and 9-hole rain checks, handicap extract and NSRCC PC records, tee capacity blocks, golf charges handed to the Finance stub, shift close, golfer enquiry",
+        "The 12 golf reports GMS-RR-001 to 012 in Club Reporting, on the live golf records",
+        "Membership and Club Reporting of v01 and v02, kept; the launcher shows Golf live with a Module details button on each live card, and four planned modules"
+      ],
+      "out": [
+        "Events, Facilities, Resorts and Finance screens (deferred to v04 to v07); the Finance side of golf charges is a stub",
+        "Balloting, PC Test, Courtesy Rounds, tournaments, buggy fleet, driving range, pace of play (not selected)",
+        "A live SGA handicap feed (a sample extract stands in), real payments, real e-mail and SMS",
+        "Real authentication and any server, API or database"
+      ]
+    },
+    "constraints": [
+      "Membership stays authoritative for member status, type and privileges; Golf only reads them",
+      "Golf never stores a balance; every charge has a responsible payer and a Finance status",
+      "The requester of a golf exception never approves it",
+      "Timers run on a fixed demo clock (Wed 28 Oct 2026 11:55)",
+      "Historical records are never physically deleted",
+      "Static site opened from file://, browser storage, invented data, Bootstrap 5.3.3 as the only library"
+    ],
+    "references": {
+      "prd": "projects/nsrcc_prototype/output/full-build-v03/prd/prd-v4.md"
+    }
+  },
+  "design": {
+    "tokens": {
+      "color": {
+        "brand-primary": "#250E62",
+        "brand-primary-dark": "#B9A3F5",
+        "brand-primary-hover": "#1F0B54",
+        "brand-primary-hover-dark": "#CDBDF8",
+        "brand-on-primary": "#FFFFFF",
+        "brand-on-primary-dark": "#16131F",
+        "brand-accent": "#4B2AA5",
+        "brand-accent-dark": "#C4B2F7",
+        "brand-soft": "#F1EEFB",
+        "brand-soft-dark": "#2B2342",
+        "brand-alt": "#4B2AA5",
+        "brand-alt-dark": "#9F86F0",
+        "brand-alt-hover": "#250E62",
+        "brand-alt-hover-dark": "#B9A3F5",
+        "brand-on-alt": "#FFFFFF",
+        "brand-on-alt-dark": "#16131F",
+        "text": "#3E3E3E",
+        "text-dark": "#ECEAF2",
+        "link": "#4B2AA5",
+        "link-dark": "#C4B2F7",
+        "surface": "#FAF9FB",
+        "surface-dark": "#16131F",
+        "surface-2": "#FFFFFF",
+        "surface-2-dark": "#211C2E",
+        "surface-3": "#F1F2F4",
+        "surface-3-dark": "#1B1726",
+        "text-muted": "#6F7279",
+        "text-muted-dark": "#ABA6B8",
+        "text-planned": "#5F6268",
+        "text-planned-dark": "#ABA6B8",
+        "nav-text": "#727272",
+        "nav-text-dark": "#B8B4C2",
+        "border": "#DEDFE3",
+        "border-dark": "#3A3448",
+        "border-input": "#E0E0E0",
+        "border-input-dark": "#4A4358",
+        "border-strong": "#C4C4C4",
+        "border-strong-dark": "#5A5268",
+        "row-divider": "#EBEBEE",
+        "row-divider-dark": "#2E2839",
+        "focus-border": "#CDB8EF",
+        "focus-border-dark": "#9F86F0",
+        "footer-bg": "#250E62",
+        "footer-bg-dark": "#250E62",
+        "footer-text": "#FFFFFF",
+        "footer-text-dark": "#FFFFFF",
+        "footer-muted": "#DCD6EC",
+        "footer-muted-dark": "#DCD6EC",
+        "chip-hold-bg": "#FFF3DF",
+        "chip-hold-bg-dark": "#33280F",
+        "chip-hold-border": "#FFB45C",
+        "chip-hold-border-dark": "#8A6A2E",
+        "success": "#077D3C",
+        "success-dark": "#5FD68A",
+        "success-bg": "#E6F9EE",
+        "success-bg-dark": "#15301F",
+        "warning": "#895400",
+        "warning-dark": "#F0B55A",
+        "warning-bg": "#FFF5E6",
+        "warning-bg-dark": "#33280F",
+        "danger": "#C4050F",
+        "danger-dark": "#FF8A80",
+        "danger-bg": "#FFE7E9",
+        "danger-bg-dark": "#3A1E24",
+        "info": "#156BB5",
+        "info-dark": "#8CC4F5",
+        "info-bg": "#E9F3FA",
+        "info-bg-dark": "#132A3D",
+        "neutral": "#616161",
+        "neutral-dark": "#B8B4C2",
+        "neutral-bg": "#F1F2F4",
+        "neutral-bg-dark": "#2A2536",
+        "chip-primary-bg": "#F0EBFB",
+        "chip-primary-bg-dark": "#2B2342",
+        "chip-primary-border": "#B994FF",
+        "chip-primary-border-dark": "#6F5BB5",
+        "tag": "#B02561",
+        "tag-dark": "#F28DB8",
+        "tag-bg": "#FDE8F0",
+        "tag-bg-dark": "#3A2030",
+        "alert-bg": "#FFE7E9",
+        "alert-bg-dark": "#3A1E24",
+        "alert-border": "#FF1D2E",
+        "alert-border-dark": "#FF8A80",
+        "alert-title": "#C4050F",
+        "alert-title-dark": "#FF8A80",
+        "qr-bg": "#FFFFFF",
+        "qr-bg-dark": "#FFFFFF",
+        "qr-fg": "#141414",
+        "qr-fg-dark": "#141414"
+      },
+      "font": {
+        "family": "Lato, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+        "size": "16px",
+        "launcherTitle": "3rem / 900",
+        "h1": "2rem / 900",
+        "h2": "1.5rem / 700",
+        "h3": "1.25rem / 700",
+        "label": "0.875rem / 700",
+        "badge": "0.75rem / 700"
+      },
+      "space": {
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "24px",
+        "6": "32px",
+        "7": "48px",
+        "8": "64px"
+      },
+      "radius": {
+        "button": "4px",
+        "card": "8px",
+        "banner": "12px"
+      }
+    },
+    "platform": {
+      "primary": "desktop",
+      "viewports": [
+        375,
+        1280
+      ]
+    },
+    "states": [
+      "empty",
+      "error",
+      "success",
+      "disabled"
+    ],
+    "content": {
+      "locale": "en-SG",
+      "currency": "SGD",
+      "dateFormat": "D MMM YYYY",
+      "tone": "clear and brief"
+    },
+    "navigation": "tabs",
+    "components": [
+      "App shell: white header with wordmark, role links, role avatar, Launcher, theme toggle and a menu below 992px",
+      "Footer band",
+      "Request journey rail (full and compact)",
+      "Buttons (primary, secondary, danger, alt card buttons)",
+      "Option tiles",
+      "Form fields with inline errors",
+      "Data table: guideline booking table, alternating shading, ID as the link, left-aligned",
+      "Status badge and chips (role, Submitted by you, Coming in v0N, Finance stub)",
+      "KPI tile",
+      "Chart (bar, donut)",
+      "Tabs",
+      "Modal",
+      "Toast",
+      "Gate checklist",
+      "Finance stub card",
+      "Workflow history timeline",
+      "Empty state",
+      "Digital membership card",
+      "Facts list",
+      "Blocked panel",
+      "Launcher: collapsible sections, module cards (live and planned), role cards, member tabs panel, demo data section",
+      "Scenario guide side panel",
+      "Report catalogue table with Export and Coming in v03 chips",
+      "Report parameters card",
+      "Report result: KPI tiles, one chart, table, no-data state",
+      "Export Excel and PDF buttons, print layout",
+      "Run history table",
+      "Report definitions form with version history",
+      "Legacy report finder",
+      "Report access checklist",
+      "Tee sheet tables by session with blocked rows",
+      "Golf booking with per-golfer check-in fields and charges",
+      "Waitlist with offers and Let offer expire",
+      "Course status cards and rain-check register",
+      "Golf administration tabs (tee sheets, settings, handicap import, PC records)",
+      "Shift close exception register",
+      "Portal golf booking card",
+      "Golf approvals tab",
+      "Launcher Module details button"
+    ],
+    "accessibility": {
+      "standard": "WCAG 2.2 AA",
+      "minTapTargetPx": 44
+    },
+    "visualReferences": [
+      {
+        "ref": "NSRCC Brand Guideline design canvas (claude.ai artifact)",
+        "shows": "Brand purple scale, neutrals, semantic colours, booking chips, Lato type, UI kit, header and footer bands, Bootstrap mapping",
+        "use": "Every colour token, Lato, radii, shadows, the stepper (journey rail), avatar, booking chips, footer band, buttons, option tiles, fields, tables, banners and toasts (design pass 3, D-247, D-248)"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/output/rapid-build-v09/prototype/index.html",
+        "shows": "The approved v09 launcher and page look",
+        "use": "Layout and components kept: CC-Demo name, collapsible sections, module cards, scenario guide"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/input/GMS/nsrcc-brand-guideline.md",
+        "shows": "NSRCC web brand: purple palette, neutrals, semantic colours, radii, components",
+        "use": "Colour tokens, radii, button and card styles"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/output/full-build-v02/mockups/index.html",
+        "shows": "The approved v02 full build (design pass 3 with the reporting components)",
+        "use": "Every page and component kept; golf pages built in the same system"
+      }
+    ]
+  }
+}

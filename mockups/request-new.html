@@ -1,0 +1,115 @@
+<!doctype html>
+<!-- New Request · CC-Demo · Build: full-build-v08 · Version: v08 · KO: KO-037 · from v07
+     From agent/reference/templates/page.html; layout rules Layout-01 to Layout-15; logic in js/rules.js, js/workflow.js and js/app.js. -->
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>New Request · CC-Demo</title>
+  <script>try { var t = localStorage.getItem("ccdemo-theme"); } catch (e) {} document.documentElement.setAttribute("data-bs-theme", t === "dark" ? "dark" : "light");</script>
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="requestNew">
+
+  <header class="app-header navbar navbar-expand-xl">
+    <div class="container cluster cluster--between">
+      <a class="navbar-brand brand" href="index.html"><span class="brand__tile" aria-hidden="true">C</span><span class="brand__mark">CC-Demo</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Show the menu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse cluster cluster--between" id="main-nav">
+      <nav class="nav app-nav" aria-label="Main">
+        <a class="nav-link" href="dashboard.html" data-roles="officer approver manager admin">Dashboard</a>
+        <a class="nav-link" href="members.html" data-roles="officer approver manager admin">Members</a>
+        <a class="nav-link" href="approvals.html" data-roles="approver manager">Approvals</a>
+        <a class="nav-link" href="requests.html" data-roles="officer approver manager admin">Requests</a>
+        <a class="nav-link" href="application.html" data-roles="officer">New Application</a>
+        <a class="nav-link" href="request-new.html" data-roles="officer admin">New Request</a>
+        <a class="nav-link" href="communications.html" data-roles="officer manager">Communications</a>
+        <a class="nav-link" href="config.html" data-roles="admin">Configuration</a>
+        <a class="nav-link" href="integrations.html" data-roles="officer admin events">Integration Feed</a>
+        <a class="nav-link" href="golf-teesheet.html" data-roles="golfops">Tee Sheet</a>
+        <a class="nav-link" href="golf-waitlist.html" data-roles="golfops">Waitlist</a>
+        <a class="nav-link" href="golf-course.html" data-roles="golfops">Course Control</a>
+        <a class="nav-link" href="golfers.html" data-roles="golfops">Golfers</a>
+        <a class="nav-link" href="golf-close.html" data-roles="golfops">Shift Close</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Golf</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="golf-teesheet.html">Tee Sheet</a></li><li data-roles="manager"><a class="dropdown-item" href="golf-course.html">Course Control</a></li><li data-roles="manager admin"><a class="dropdown-item" href="golfers.html">Golfers</a></li><li data-roles="admin"><a class="dropdown-item" href="golf-admin.html">Golf Admin</a></li></ul></div>
+        <a class="nav-link" href="events.html" data-roles="events manager golfops">Events</a>
+        <a class="nav-link" href="event-rooms.html" data-roles="events">Function Rooms</a>
+        <a class="nav-link" href="facilities.html" data-roles="facilities manager">Facilities</a>
+        <a class="nav-link" href="facility-bookings.html" data-roles="facilities">Bookings</a>
+        <a class="nav-link" href="facility-admission.html" data-roles="facilities">Admissions</a>
+        <a class="nav-link" href="bowling.html" data-roles="facilities">Bowling</a>
+        <a class="nav-link" href="facility-admin.html" data-roles="admin">Facilities Admin</a>
+        <a class="nav-link" href="resort-desk.html" data-roles="resorts">Front desk</a>
+        <a class="nav-link" href="resort-rooms.html" data-roles="resorts housekeeping">Rooms</a>
+        <a class="nav-link" href="resort-audit.html" data-roles="resorts">Night Audit</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Resorts</a>
+          <ul class="dropdown-menu"><li data-roles="manager"><a class="dropdown-item" href="resort-desk.html">Front desk</a></li><li data-roles="manager"><a class="dropdown-item" href="resort-rooms.html">Rooms</a></li><li data-roles="manager admin"><a class="dropdown-item" href="resort-audit.html">Night Audit</a></li><li data-roles="admin"><a class="dropdown-item" href="resort-config.html">Resort config</a></li></ul></div>
+        <a class="nav-link" href="finance.html" data-roles="finance finapprover">Finance home</a>
+        <a class="nav-link" href="fin-approvals.html" data-roles="finapprover">Approvals</a>
+        <div class="nav-item dropdown" data-roles="finance finapprover manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Finance</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="finance.html">Finance home</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-events.html">Financial events</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-accounts.html">Member accounts</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-collections.html">Collections</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-refunds.html">Refunds and adjustments</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recognition.html">Revenue recognition</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recon.html">Reconciliation and exceptions</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-posting.html">Periods and posting</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-dunning.html">Dunning</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-ar.html">General AR</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-config.html">Finance configuration</a></li><li data-roles="finance"><a class="dropdown-item" href="fin-approvals.html">Finance approvals</a></li></ul></div>
+        <a class="nav-link" href="reports.html" data-roles="officer golfops facilities resorts finance finapprover manager admin">Reports</a>
+        <a class="nav-link" href="portal.html" data-roles="member">My Membership</a>
+      </nav>
+      <div class="cluster">
+        <span class="role-avatar"><span class="role-avatar__initials" aria-hidden="true" data-role-initials>CC</span><span data-role-label>No role</span></span>
+        <a class="btn btn-sm btn-outline-secondary" href="index.html">Launcher</a>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-theme-toggle aria-label="Switch light or dark theme">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="container stack stack--sections" id="main">
+    <div class="page-header">
+      <div class="stack"><h1 id="req-title">New request</h1><p class="text-muted">Every lifecycle request goes through the same documents, approval and payment gates.</p></div>
+      
+    </div>
+    <div class="stack">
+      <form class="form-grid card card-body" id="req-form" novalidate>
+        <div class="field"><label class="form-label required" for="type">Request type</label><select class="form-select" id="type" name="type"></select></div>
+        <div class="field" id="membership-field"><label class="form-label required" for="membershipId">Membership</label><select class="form-select" id="membershipId" name="membershipId"></select></div>
+        <fieldset class="field field--full" data-for="renewal"><legend class="form-label">Package</legend><div class="grid" id="years-tiles"></div></fieldset>
+        <div class="field" data-for="renewal withdrawal"><div class="form-check"><input class="form-check-input" type="checkbox" id="memberRequested" name="memberRequested"><label class="form-check-label" for="memberRequested">Member's own request (BR-009, BR-013)</label></div></div>
+        <div class="field" data-for="extension"><label class="form-label" for="months">Months</label><input class="form-control" id="months" name="months" type="number" min="1"></div>
+        <div class="field" data-for="transfer"><label class="form-label" for="recipient">Recipient</label><select class="form-select" id="recipient" name="recipient"></select></div>
+        <div class="field" data-for="deceased"><label class="form-label" for="dateOfDeath">Date of death</label><input class="form-control" id="dateOfDeath" name="dateOfDeath" type="date"></div>
+        <div class="field" data-for="deceased"><label class="form-label" for="beneficiary">Beneficiary</label><select class="form-select" id="beneficiary" name="beneficiary"></select></div>
+        <div class="field" data-for="deceased"><label class="form-label" for="refund">Goodwill refund (S$)</label><input class="form-control" id="refund" name="refund" type="number" min="0"></div>
+        <div class="field" data-for="absent medical"><label class="form-label" for="from">From</label><input class="form-control" id="from" name="from" type="date"></div>
+        <div class="field" data-for="absent medical"><label class="form-label" for="to">To</label><input class="form-control" id="to" name="to" type="date"></div>
+        <div class="field" data-for="statusChange"><label class="form-label" for="target">New status</label><select class="form-select" id="target" name="target"></select></div>
+        <div class="field" data-for="supplementary"><label class="form-label" for="person">Supplementary member</label><select class="form-select" id="person" name="person"></select></div>
+        <div class="field" data-for="nomineeChange corporateCreation"><label class="form-label" for="nominee">Nominee</label><select class="form-select" id="nominee" name="nominee"></select></div>
+        <div class="field" data-for="nomineeChange"><label class="form-label" for="outgoing">Outgoing nominee</label><select class="form-select" id="outgoing" name="outgoing"></select></div>
+        <div class="field" data-for="classification"><label class="form-label" for="kind">Classification</label><select class="form-select" id="kind" name="kind"><option value="committee">Committee</option><option value="honorary">Honorary</option></select></div>
+        <div class="field" data-for="corporateCreation"><label class="form-label" for="corpType">Corporate type</label><select class="form-select" id="corpType" name="corpType"></select></div>
+        <div class="field" data-for="corporateCreation"><label class="form-label" for="sponsor">Sponsoring company</label><input class="form-control" id="sponsor" name="sponsor"></div>
+        <div class="field field--full" data-for="transfer extension withdrawal absent suspension reinstatement statusChange"><label class="form-label" for="reason">Reason</label><textarea class="form-control" id="reason" name="reason" rows="2"></textarea></div>
+        <fieldset class="field field--full"><legend class="form-label">Documents received (BR-004)</legend><div class="stack" id="req-docs"></div></fieldset>
+        <p class="alert alert-danger field--full" id="req-err" role="alert" data-state="error" hidden></p>
+        <div class="btn-row"><a class="btn btn-outline-secondary" href="dashboard.html">Cancel</a><button type="button" class="btn btn-outline-secondary" id="save-draft">Save draft</button><button type="submit" class="btn btn-primary">Submit request</button></div>
+      </form>
+      <aside class="card card-body stack" aria-labelledby="pv-h"><h2 class="h3" id="pv-h">Rule preview</h2><p id="req-current"></p><ul class="stack" id="req-preview"></ul></aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container cluster cluster--between"><strong>CC-Demo</strong><span>Version 8: all seven modules (Membership, Club Reporting, Golf, Events, Facilities, Resorts and Finance). All data is invented.</span></div>
+  </footer>
+
+  <div class="toast-host" aria-live="polite"></div>
+  <script src="vendor/bootstrap.bundle.min.js"></script>
+  <script src="data/seed.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/workflow.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- Reconciliation and exceptions · CC-Demo · Build: full-build-v08 · Version: v08 · KO: KO-037 · from v07
+     From agent/reference/templates/page.html; layout rules Layout-01 to Layout-15; logic in js/rules.js, js/workflow.js and js/app.js. -->
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Reconciliation and exceptions · CC-Demo</title>
+  <script>try { var t = localStorage.getItem("ccdemo-theme"); } catch (e) {} document.documentElement.setAttribute("data-bs-theme", t === "dark" ? "dark" : "light");</script>
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="finRecon">
+
+  <header class="app-header navbar navbar-expand-xl">
+    <div class="container cluster cluster--between">
+      <a class="navbar-brand brand" href="index.html"><span class="brand__tile" aria-hidden="true">C</span><span class="brand__mark">CC-Demo</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Show the menu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse cluster cluster--between" id="main-nav">
+      <nav class="nav app-nav" aria-label="Main">
+        <a class="nav-link" href="dashboard.html" data-roles="officer approver manager admin">Dashboard</a>
+        <a class="nav-link" href="members.html" data-roles="officer approver manager admin">Members</a>
+        <a class="nav-link" href="approvals.html" data-roles="approver manager">Approvals</a>
+        <a class="nav-link" href="requests.html" data-roles="officer approver manager admin">Requests</a>
+        <a class="nav-link" href="application.html" data-roles="officer">New Application</a>
+        <a class="nav-link" href="request-new.html" data-roles="officer admin">New Request</a>
+        <a class="nav-link" href="communications.html" data-roles="officer manager">Communications</a>
+        <a class="nav-link" href="config.html" data-roles="admin">Configuration</a>
+        <a class="nav-link" href="integrations.html" data-roles="officer admin events">Integration Feed</a>
+        <a class="nav-link" href="golf-teesheet.html" data-roles="golfops">Tee Sheet</a>
+        <a class="nav-link" href="golf-waitlist.html" data-roles="golfops">Waitlist</a>
+        <a class="nav-link" href="golf-course.html" data-roles="golfops">Course Control</a>
+        <a class="nav-link" href="golfers.html" data-roles="golfops">Golfers</a>
+        <a class="nav-link" href="golf-close.html" data-roles="golfops">Shift Close</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Golf</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="golf-teesheet.html">Tee Sheet</a></li><li data-roles="manager"><a class="dropdown-item" href="golf-course.html">Course Control</a></li><li data-roles="manager admin"><a class="dropdown-item" href="golfers.html">Golfers</a></li><li data-roles="admin"><a class="dropdown-item" href="golf-admin.html">Golf Admin</a></li></ul></div>
+        <a class="nav-link" href="events.html" data-roles="events manager golfops">Events</a>
+        <a class="nav-link" href="event-rooms.html" data-roles="events">Function Rooms</a>
+        <a class="nav-link" href="facilities.html" data-roles="facilities manager">Facilities</a>
+        <a class="nav-link" href="facility-bookings.html" data-roles="facilities">Bookings</a>
+        <a class="nav-link" href="facility-admission.html" data-roles="facilities">Admissions</a>
+        <a class="nav-link" href="bowling.html" data-roles="facilities">Bowling</a>
+        <a class="nav-link" href="facility-admin.html" data-roles="admin">Facilities Admin</a>
+        <a class="nav-link" href="resort-desk.html" data-roles="resorts">Front desk</a>
+        <a class="nav-link" href="resort-rooms.html" data-roles="resorts housekeeping">Rooms</a>
+        <a class="nav-link" href="resort-audit.html" data-roles="resorts">Night Audit</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Resorts</a>
+          <ul class="dropdown-menu"><li data-roles="manager"><a class="dropdown-item" href="resort-desk.html">Front desk</a></li><li data-roles="manager"><a class="dropdown-item" href="resort-rooms.html">Rooms</a></li><li data-roles="manager admin"><a class="dropdown-item" href="resort-audit.html">Night Audit</a></li><li data-roles="admin"><a class="dropdown-item" href="resort-config.html">Resort config</a></li></ul></div>
+        <a class="nav-link" href="finance.html" data-roles="finance finapprover">Finance home</a>
+        <a class="nav-link" href="fin-approvals.html" data-roles="finapprover">Approvals</a>
+        <div class="nav-item dropdown" data-roles="finance finapprover manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Finance</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="finance.html">Finance home</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-events.html">Financial events</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-accounts.html">Member accounts</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-collections.html">Collections</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-refunds.html">Refunds and adjustments</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recognition.html">Revenue recognition</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recon.html">Reconciliation and exceptions</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-posting.html">Periods and posting</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-dunning.html">Dunning</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-ar.html">General AR</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-config.html">Finance configuration</a></li><li data-roles="finance"><a class="dropdown-item" href="fin-approvals.html">Finance approvals</a></li></ul></div>
+        <a class="nav-link" href="reports.html" data-roles="officer golfops facilities resorts finance finapprover manager admin">Reports</a>
+        <a class="nav-link" href="portal.html" data-roles="member">My Membership</a>
+      </nav>
+      <div class="cluster">
+        <span class="role-avatar"><span class="role-avatar__initials" aria-hidden="true" data-role-initials>CC</span><span data-role-label>No role</span></span>
+        <a class="btn btn-sm btn-outline-secondary" href="index.html">Launcher</a>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-theme-toggle aria-label="Switch light or dark theme">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main data-scenario="S6" class="container stack stack--sections" id="main" data-state="populated">
+    <div class="page-header">
+      <div class="stack"><span class="eyebrow" data-fin-clock>Demo clock</span><h1 id="pg-title">Reconciliation and exceptions</h1><p class="text-muted">Cashier close, reconciliations, the clearing account and the exception register (BR-154 – BR-156, BR-163).</p></div>
+      <div class="btn-row"></div>
+    </div>
+    <nav id="fin-nav" aria-label="Finance"></nav>
+    <div class="alert alert-light border cluster mb-0" role="note"><span class="badge badge-hold">Interim design</span><span>Pending Finance validation: values are demo values (BR-154, BR-156, BR-163, D-371).</span></div>
+    <div class="stack"><ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><button class="nav-link active" id="rn-t-ses-btn" data-bs-toggle="tab" data-bs-target="#rn-t-ses" type="button" role="tab" aria-controls="rn-t-ses" aria-selected="true">Cashier sessions</button></li><li class="nav-item" role="presentation"><button class="nav-link" id="rn-t-rec-btn" data-bs-toggle="tab" data-bs-target="#rn-t-rec" type="button" role="tab" aria-controls="rn-t-rec" aria-selected="false">Reconciliations</button></li><li class="nav-item" role="presentation"><button class="nav-link" id="rn-t-ex-btn" data-bs-toggle="tab" data-bs-target="#rn-t-ex" type="button" role="tab" aria-controls="rn-t-ex" aria-selected="false">Exception register</button></li></ul><div class="tab-content"><div class="tab-pane fade show active stack" id="rn-t-ses" role="tabpanel" aria-labelledby="rn-t-ses-btn" tabindex="0"><div class="table-wrap table-wrap--cards"><table class="table" id="rn-sessions"><thead><tr><th scope="col">Session</th><th scope="col">Location</th><th scope="col">By tender</th><th scope="col" class="num">Variance</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div><p class="text-muted mb-0">Module closes (golf shift close, bowling reconciliation, Night Audit) feed their totals here; this batch close is the Finance control (RC-150).</p></div><div class="tab-pane fade stack" id="rn-t-rec" role="tabpanel" aria-labelledby="rn-t-rec-btn" tabindex="0"><div class="table-wrap table-wrap--cards"><table class="table" id="rn-profiles"><thead><tr><th scope="col">Profile</th><th scope="col" class="num">Expected</th><th scope="col" class="num">Actual</th><th scope="col">Timing item</th><th scope="col" class="col-status">Result</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div><section class="stack" aria-labelledby="h-rnc"><h2 class="h5" id="h-rnc">Clearing</h2><div class="table-wrap table-wrap--cards"><table class="table" id="rn-clearing"><thead><tr><th scope="col">Flow</th><th scope="col">Description</th><th scope="col" class="num">Expected</th><th scope="col" class="num">Matched</th><th scope="col" class="num">Residual</th><th scope="col" class="col-status">Status</th></tr></thead><tbody></tbody></table></div></section></div><div class="tab-pane fade stack" id="rn-t-ex" role="tabpanel" aria-labelledby="rn-t-ex-btn" tabindex="0"><div class="table-wrap table-wrap--cards"><table class="table" id="rn-ex"><thead><tr><th scope="col">Exception</th><th scope="col">Category</th><th scope="col">Owner</th><th scope="col">Reference</th><th scope="col">Reason</th><th scope="col" class="num">Age</th><th scope="col" class="col-status">Status</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div></div></div></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container cluster cluster--between"><strong>CC-Demo</strong><span>Version 8: all seven modules (Membership, Club Reporting, Golf, Events, Facilities, Resorts and Finance). All data is invented.</span></div>
+  </footer>
+
+  <div class="toast-host" aria-live="polite"></div>
+  <script src="vendor/bootstrap.bundle.min.js"></script>
+  <script src="data/seed.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/workflow.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

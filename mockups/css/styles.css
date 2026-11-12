@@ -1,0 +1,918 @@
+/* =====================================================================
+   styles.css · CC-Demo club management system · full build v08 (all seven modules)
+   Build: full-build-v08 · Version: v08 · KO: KO-037 · from v07
+   Design system v4 (design-system-v4.md, D-393, D-394): the NEARCC Brand Guideline canvas
+   (artifacts/design/design-canvas-v08.md) on the current agent/reference/ui/base.css.
+   Order: fonts, 1. tokens (canvas values in the base.css tiers; dark values derived), sections 2 to 4
+   of base.css unchanged, 5. the kit's components (structure only, no StarHub look), 6. project components.
+   No StarHub value, logo or kit token is used (D-393). UI rule exceptions: none.
+   ===================================================================== */
+
+/* Fonts: Lato 400 / 700 / 900 (local, SIL OFL, D-240) and League Gothic (local, SIL OFL, D-401); system stack behind them */
+@font-face { font-family: "Lato"; font-style: normal; font-weight: 400; font-display: swap; src: url(../assets/fonts/lato-400.woff2) format("woff2"); }
+@font-face { font-family: "Lato"; font-style: normal; font-weight: 700; font-display: swap; src: url(../assets/fonts/lato-700.woff2) format("woff2"); }
+@font-face { font-family: "Lato"; font-style: normal; font-weight: 900; font-display: swap; src: url(../assets/fonts/lato-900.woff2) format("woff2"); }
+@font-face { font-family: "League Gothic"; font-style: normal; font-weight: 400; font-display: swap; src: url(../assets/fonts/league-gothic-latin-400.woff2) format("woff2"); }
+
+/* ---------- 1. Tokens: the NEARCC Brand Guideline canvas (D-394); values the canvas leaves open from the neutral base.css ----------
+   1a primitives (named by what they are, used only by 1b) · 1b semantic (pages and components) · 1c Bootstrap --bs-* */
+:root {
+  /* 1a. Primitives: canvas section 02 (brand, neutrals, status, illustration) */
+  --color-white: #FFFFFF;
+  --color-violet-50: #F1EEFB;      /* Brand soft */
+  --color-violet-200: #CDB8EF;     /* Focus border */
+  --color-violet-600: #4B2AA5;     /* Brand primary */
+  --color-violet-800: #250E62;     /* Brand strong */
+  --color-violet-900: #1F0B54;     /* Brand hover */
+  --color-gray-25: #FAF9FB;        /* Page */
+  --color-gray-50: #F1F2F4;        /* Surface 2 */
+  --color-gray-75: #EEEEEF;        /* Disabled fill */
+  --color-gray-100: #DEDFE3;       /* Border subtle */
+  --color-gray-150: #E0E0E0;       /* Divider */
+  --color-gray-300: #C4C4C4;       /* Outline */
+  --color-gray-400: #9C9C9C;       /* Label muted: decorative only (2.7:1) */
+  --color-gray-600: #727272;       /* Text secondary */
+  --color-gray-650: #616161;       /* neutral status text (base.css neutral, 6.2:1) */
+  --color-gray-800: #3E3E3E;       /* Heading */
+  --color-gray-850: #34343A;       /* Text primary */
+  --color-green-700: #077D3C;      /* success text: canvas #078C43 darkened for AA (D-241) */
+  --color-green-600: #078C43;      /* canvas success: icons and borders only */
+  --color-green-50: #E6F9EE;
+  --color-amber-700: #895400;      /* canvas warning text */
+  --color-amber-500: #E78C00;      /* canvas warning: icons and borders only */
+  --color-amber-50: #FFF5E6;
+  --color-red-700: #B42318;        /* canvas notice red: error text */
+  --color-red-600: #D92D20;        /* canvas error: icons, borders, invalid field */
+  --color-red-50: #FFE5E7;
+  --color-blue-700: #156BB5;       /* canvas info */
+  --color-blue-50: #E9F3FA;
+  --color-teal-700: #167B8C;       /* illustration teal */
+  --color-image-fallback: #DCE6E8;
+  /* Dark primitives: derived from the canvas hues (the canvas has no dark theme); never StarHub */
+  --color-night-950: #16131F;
+  --color-night-900: #211C2E;
+  --color-night-850: #2A2438;
+  --color-night-800: #2E2839;
+  --color-night-700: #3A3448;
+  --color-night-500: #8F88A0;
+  --color-night-300: #ABA6B8;
+  --color-night-100: #ECEAF2;
+  --color-lilac-300: #B9A3F5;
+  --color-lilac-200: #C4B2F7;
+  --color-lilac-100: #CDBDF8;
+  --color-lilac-900: #2B2342;
+
+  /* 1b. Semantic: colour */
+  --brand-primary: var(--color-violet-800);       /* Brand strong: the primary button (white text 15.3:1) */
+  --brand-primary-hover: var(--color-violet-900);
+  --brand-on-primary: var(--color-white);
+  --brand-accent: var(--color-violet-600);        /* Brand primary: links, active nav, selected, icons beside headings */
+  --brand-soft: var(--color-violet-50);           /* selected fill, hover tint */
+  --brand-primary-soft: var(--color-violet-50);   /* kit name for the selected row */
+  --brand-secondary: var(--color-gray-850);       /* body text */
+  --heading: var(--color-gray-800);
+  --brand-link: var(--color-violet-600);
+  --surface: var(--color-gray-25);                /* page */
+  --surface-2: var(--color-white);                /* cards, panels, tables */
+  --surface-3: var(--color-gray-50);              /* secondary surface */
+  --surface-overlay: var(--color-white);
+  --surface-disabled: var(--color-gray-75);
+  --backdrop: rgba(0, 0, 0, 0.5);                 /* canvas scrim */
+  --text-muted: var(--color-gray-600);
+  --nav-text: var(--color-gray-600);
+  --border: var(--color-gray-100);
+  --divider: var(--color-gray-150);
+  --border-strong: var(--color-gray-300);         /* decorative outlines (outline button edge stays 3:1 through --border-control) */
+  --border-control: var(--color-gray-600);        /* field, select, checkbox edges: 4.8:1 (RC-217) */
+  --focus-border: var(--color-violet-200);
+  --footer-bg: var(--color-violet-800);
+  --footer-heading: rgba(255, 255, 255, 0.8);
+  --footer-text: rgba(255, 255, 255, 0.6);
+  --footer-watermark: rgba(255, 255, 255, 0.1);
+  --image-fallback: var(--color-image-fallback);
+  --qr-bg: var(--color-white);
+  --qr-fg: #141414;
+
+  /* Charts (RC-226): series 1 the brand, 2 – 5 the base.css colour-blind-safe series; each 3:1 on the card surface */
+  --chart-1: var(--color-violet-600);
+  --chart-2: #C2510A;
+  --chart-3: #007A5E;
+  --chart-4: #A0527F;
+  --chart-5: #8A6100;
+  --chart-grid: var(--color-gray-150);
+
+  /* Status (RC-216): text colours at 4.5:1 on the surfaces and their tints; the canvas brights for icons and borders */
+  --success: var(--color-green-700);   --success-bg: var(--color-green-50);  --success-strong: var(--color-green-600);
+  --warning: var(--color-amber-700);   --warning-bg: var(--color-amber-50);  --warning-strong: var(--color-amber-500);
+  --danger: var(--color-red-700);      --danger-bg: var(--color-red-50);     --danger-strong: var(--color-red-600);
+  --info: var(--color-blue-700);       --info-bg: var(--color-blue-50);
+  --neutral: var(--color-gray-650);    --neutral-bg: var(--color-gray-50);
+  --on-success: var(--color-white);
+  --on-warning: var(--color-white);
+  --on-danger: var(--color-white);
+  --on-info: var(--color-white);
+
+  /* Focus (RC-218): a solid 2px ring in Brand primary (9.7:1 on white), 2px offset */
+  --focus-ring-color: var(--color-violet-600);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* 1b. Semantic: type (canvas section 03; RC-219, RC-220). Lato for the product, League Gothic for the wordmark and display */
+  --font-family: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "League Gothic", "Lato", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-size: 16px;               /* body 16/24 */
+  --line-height: 1.5;
+  --line-height-tight: 1.25;       /* H1 32/40 */
+  --font-size-xs: 12px;            /* caption: table headers, badges */
+  --font-size-sm: 14px;            /* small: labels, notices, table rows */
+  --font-size-md: 20px;            /* card title 20/30 */
+  --font-size-lg: 20px;            /* H3 panel 20/30 */
+  --font-size-xl: 28px;            /* H2 section */
+  --font-size-2xl: 32px;           /* H1 page title */
+  --font-size-lead: 20px;          /* lead 20/30 */
+  --font-size-display: 64px;       /* League Gothic display */
+  --font-weight-regular: 400;
+  --font-weight-medium: 700;       /* Lato has no 500 or 600 */
+  --font-weight-semibold: 700;
+  --font-weight-heading: 700;
+  --font-weight-black: 900;
+  --letter-spacing-heading: -0.01em;   /* headings track -1 % of their size */
+  --measure: 75ch;
+
+  /* 1b. Semantic: elevation (canvas section 04), motion, layers */
+  --shadow-1: 0 0 30px rgba(0, 0, 0, 0.05);       /* card */
+  --shadow-1-hover: 0 0 30px rgba(0, 0, 0, 0.09); /* card hover */
+  --shadow-panel: 0 0 15px rgba(0, 0, 0, 0.05);   /* panel */
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.10);    /* menus, toasts */
+  --shadow-3: 0 20px 60px rgba(0, 0, 0, 0.22);    /* dialog, guide panel */
+  --shadow-header: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --z-sticky: 1020;
+  --z-offcanvas: 1045;
+  --z-modal: 1055;
+  --z-toast: 1090;
+
+  /* 1b. Semantic: controls (canvas 40px controls) */
+  --control-h-sm: 32px;
+  --control-h: 40px;
+  --control-h-lg: 48px;
+  --target-min: 44px;
+
+  /* Spacing (canvas steps 4 · 8 · 12 · 16 · 20 · 24, then the base.css scale) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Layout (RC-222): content 1120, section gap 52, gutter 24 (16 on phones) */
+  --container-max: 1120px;
+  --gutter: var(--space-5);
+  --section-gap: 52px;
+  --item-gap: var(--space-4);
+  --panel-pad: var(--space-5);
+  --form-cols: 2;
+  --icon-size: 20px;
+  --chart-h: 260px;
+
+  /* Shape (RC-225): controls 4, notices 5, cards 8, pill */
+  --radius-button: 4px;
+  --radius-notice: 5px;
+  --radius-card: 8px;
+  --radius-card-sm: 8px;
+  --radius-pill: 999px;
+
+  /* 1c. Component: Bootstrap's --bs-* variables, each -rgb triplet written from the same hex as its token */
+  --bs-box-shadow-sm: var(--shadow-1);
+  --bs-box-shadow: var(--shadow-2);
+  --bs-box-shadow-lg: var(--shadow-3);
+  --bs-body-font-family: var(--font-family);
+  --bs-body-font-size: var(--font-size);
+  --bs-body-line-height: var(--line-height);
+  --bs-body-bg: var(--surface);
+  --bs-body-color: var(--brand-secondary);
+  --bs-emphasis-color: var(--heading);
+  --bs-heading-color: var(--heading);
+  --bs-secondary-color: var(--text-muted);
+  --bs-tertiary-bg: var(--surface-3);
+  --bs-border-color: var(--border);
+  --bs-border-radius: var(--radius-button);
+  --bs-border-radius-sm: var(--radius-button);
+  --bs-border-radius-lg: var(--radius-card);
+  --bs-primary: var(--brand-primary);
+  --bs-primary-rgb: 37, 14, 98;            /* --brand-primary #250E62 */
+  --bs-link-color: var(--brand-link);
+  --bs-link-color-rgb: 75, 42, 165;        /* --brand-link #4B2AA5 */
+  --bs-link-hover-color: var(--brand-primary-hover);
+  --bs-link-hover-color-rgb: 31, 11, 84;   /* #1F0B54 */
+  --bs-success: var(--success);
+  --bs-success-rgb: 7, 125, 60;            /* #077D3C */
+  --bs-warning: var(--warning);
+  --bs-warning-rgb: 137, 84, 0;            /* #895400 */
+  --bs-danger: var(--danger);
+  --bs-danger-rgb: 180, 35, 24;            /* #B42318 */
+  --bs-info: var(--info);
+  --bs-info-rgb: 21, 107, 181;             /* #156BB5 */
+  --bs-secondary: var(--neutral);
+  --bs-secondary-rgb: 97, 97, 97;          /* #616161 */
+  --bs-form-invalid-color: var(--danger);
+  --bs-form-invalid-border-color: var(--danger-strong);
+  /* Status badges: the status text on the canvas tint (each 4.5:1) */
+  --bs-success-text-emphasis: var(--success);  --bs-success-bg-subtle: var(--success-bg);  --bs-success-border-subtle: var(--success-strong);
+  --bs-warning-text-emphasis: var(--warning);  --bs-warning-bg-subtle: var(--warning-bg);  --bs-warning-border-subtle: var(--warning-strong);
+  --bs-danger-text-emphasis: var(--danger);    --bs-danger-bg-subtle: var(--danger-bg);    --bs-danger-border-subtle: var(--danger-strong);
+  --bs-info-text-emphasis: var(--info);        --bs-info-bg-subtle: var(--info-bg);        --bs-info-border-subtle: var(--info);
+  --bs-secondary-text-emphasis: var(--neutral); --bs-secondary-bg-subtle: var(--neutral-bg); --bs-secondary-border-subtle: var(--border-strong);
+  --bs-code-color: var(--brand-secondary);
+}
+
+/* Dark theme: derived from the canvas hues (D-394, RC-232); each text pair checked for AA in design-system-v4.md */
+[data-bs-theme="dark"] {
+  --brand-primary: var(--color-lilac-300);
+  --brand-primary-hover: var(--color-lilac-100);
+  --brand-on-primary: var(--color-night-950);
+  --brand-accent: var(--color-lilac-200);
+  --brand-soft: var(--color-lilac-900);
+  --brand-primary-soft: var(--color-lilac-900);
+  --brand-secondary: var(--color-night-100);
+  --heading: #F5F3FA;
+  --brand-link: var(--color-lilac-200);
+  --surface: var(--color-night-950);
+  --surface-2: var(--color-night-900);
+  --surface-3: #1B1726;
+  --surface-overlay: var(--color-night-850);
+  --surface-disabled: var(--color-night-800);
+  --backdrop: rgba(0, 0, 0, 0.7);
+  --text-muted: var(--color-night-300);
+  --nav-text: #B8B4C2;
+  --border: var(--color-night-700);
+  --divider: var(--color-night-800);
+  --border-strong: #5A5268;
+  --border-control: var(--color-night-500);
+  --focus-border: #6F5BB5;
+  --footer-bg: var(--color-violet-800);           /* the footer keeps its Brand strong band in both themes */
+  --image-fallback: #2B3436;
+  --chart-1: var(--color-lilac-300);
+  --chart-2: #E69F00;
+  --chart-3: #2BC19A;
+  --chart-4: #CC79A7;
+  --chart-5: #F0E442;
+  --chart-grid: var(--color-night-700);
+  --success: #5FD68A;  --success-bg: #15301F;  --success-strong: #5FD68A;
+  --warning: #F0B55A;  --warning-bg: #33280F;  --warning-strong: #F0B55A;
+  --danger: #FF8A80;   --danger-bg: #3A1E24;   --danger-strong: #FF8A80;
+  --info: #8CC4F5;     --info-bg: #132A3D;
+  --neutral: #B8B4C2;  --neutral-bg: #2A2536;
+  --on-success: var(--color-night-950);
+  --on-warning: var(--color-night-950);
+  --on-danger: var(--color-night-950);
+  --on-info: var(--color-night-950);
+  --focus-ring-color: var(--color-lilac-200);
+  --shadow-1: 0 0 30px rgba(0, 0, 0, 0.40);
+  --shadow-1-hover: 0 0 30px rgba(0, 0, 0, 0.55);
+  --shadow-panel: 0 0 15px rgba(0, 0, 0, 0.40);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.50);
+  --shadow-3: 0 20px 60px rgba(0, 0, 0, 0.60);
+  --shadow-header: 0 1px 0 var(--color-night-700);
+  --bs-primary-rgb: 185, 163, 245;
+  --bs-link-color-rgb: 196, 178, 247;
+  --bs-link-hover-color-rgb: 205, 189, 248;
+  --bs-success-rgb: 95, 214, 138;
+  --bs-warning-rgb: 240, 181, 90;
+  --bs-danger-rgb: 255, 138, 128;
+  --bs-info-rgb: 140, 196, 245;
+  --bs-secondary-rgb: 184, 180, 194;
+}
+
+/* Buttons: Bootstrap sets literal colours per variant, so the variants used here point at the tokens */
+.btn { --bs-btn-border-radius: var(--radius-button); }
+.btn-primary {
+  --bs-btn-color: var(--brand-on-primary);
+  --bs-btn-bg: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-color: var(--brand-on-primary);
+  --bs-btn-hover-bg: var(--brand-primary-hover);
+  --bs-btn-hover-border-color: var(--brand-primary-hover);
+  --bs-btn-active-color: var(--brand-on-primary);
+  --bs-btn-active-bg: var(--brand-primary-hover);
+  --bs-btn-active-border-color: var(--brand-primary-hover);
+  --bs-btn-disabled-color: var(--brand-on-primary);
+  --bs-btn-disabled-bg: var(--brand-primary);
+  --bs-btn-disabled-border-color: var(--brand-primary);
+}
+.btn-outline-secondary {
+  --bs-btn-color: var(--brand-secondary);
+  --bs-btn-border-color: var(--border);
+  --bs-btn-hover-color: var(--brand-secondary);
+  --bs-btn-hover-bg: var(--surface-2);
+  --bs-btn-hover-border-color: var(--border);
+  --bs-btn-active-color: var(--brand-secondary);
+  --bs-btn-active-bg: var(--surface-2);
+  --bs-btn-active-border-color: var(--border);
+  --bs-btn-disabled-color: var(--text-muted);
+  --bs-btn-disabled-border-color: var(--border);
+}
+.card { --bs-card-bg: var(--surface-2); --bs-card-border-radius: var(--radius-card); --bs-card-spacer-y: var(--space-4); --bs-card-spacer-x: var(--space-4); }
+
+/* ---------- 2. Reboot adjustments (Bootstrap's Reboot is the reset) ---------- */
+/* The layout gaps own the rhythm (Layout-08): no stray heading, paragraph, list or label margins inside layout classes */
+:where(.stack, .cluster, .page-header, .grid, .form-grid, .field, .btn-row, .card) > :is(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, label, .form-label, .card-title, .invalid-feedback) { margin: 0; }
+.table-wrap > .table { margin: 0; }
+
+/* Type scale (tokens in section 1): replaces Bootstrap's large responsive heading sizes, so the page title
+   leads and the body reads at --font-size. Fallbacks keep a refine copy whose section 1 predates these tokens working. */
+h1, .h1 { font-size: var(--font-size-2xl, 30px); }
+h2, .h2 { font-size: var(--font-size-xl, 24px); }
+h3, .h3 { font-size: var(--font-size-lg, 20px); }
+h4, .h4 { font-size: var(--font-size-md, 17px); }
+h5, .h5, h6, .h6 { font-size: var(--font-size, 15px); }
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { font-weight: var(--font-weight-heading, var(--font-weight-semibold, 600)); line-height: var(--line-height-tight, 1.25); }
+/* Running text stays under 80 characters a line */
+main p, .form-text, .invalid-feedback, .empty-state { max-width: var(--measure, 75ch); }
+
+/* Focus (WCAG 1.4.11, 2.4.7): one ink ring on every focusable element, in both themes, instead of
+   Bootstrap's faint brand-coloured glow (the StarHub green is 1.9:1 on white, too faint for a ring) */
+:root, [data-bs-theme] { --focus-shadow: 0 0 0 var(--focus-ring-offset, 2px) var(--surface), 0 0 0 calc(var(--focus-ring-offset, 2px) + var(--focus-ring-width, 2px)) var(--focus-ring-color, var(--brand-secondary)); }
+:focus-visible { outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--brand-secondary)); outline-offset: var(--focus-ring-offset, 2px); }
+.btn { --bs-btn-focus-box-shadow: var(--focus-shadow); }
+.btn:focus-visible, .nav-link:focus-visible { outline: 0; box-shadow: var(--focus-shadow); }
+
+/* Field edges at 3:1 (WCAG 1.4.11): the decorative --border stays for cards and dividers */
+.form-control, .form-select, .form-check-input { border-color: var(--border-control, var(--border)); }
+
+/* Motion: transitions use the motion tokens; reduced motion turns them off (WCAG 2.3.3) */
+.btn, .form-control, .form-select, .nav-link { transition-duration: var(--duration-fast, 120ms); transition-timing-function: var(--easing-standard, ease); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* Control size and density (Layout-04): one height per size from the tokens. A page opts into another density
+   with data-density on <html> (full builds only, a logged Design decision; rapid keeps the default) */
+.btn, .form-control, .form-select { min-height: var(--control-h, 38px); }
+.btn-sm, .form-control-sm, .form-select-sm { min-height: var(--control-h-sm, 31px); }
+.btn-lg, .form-control-lg, .form-select-lg { min-height: var(--control-h-lg, 48px); }
+[data-density="compact"] { --control-h-sm: 28px; --control-h: 32px; --control-h-lg: 40px; --item-gap: var(--space-3); }
+[data-density="comfortable"] { --control-h-sm: 36px; --control-h: 44px; --control-h-lg: 52px; --item-gap: var(--space-5); }
+
+/* Layers and overlays from the tokens */
+.dropdown-menu, .toast, .popover { --bs-dropdown-bg: var(--surface-overlay, var(--surface)); --bs-toast-bg: var(--surface-overlay, var(--surface)); --bs-popover-bg: var(--surface-overlay, var(--surface)); }
+.modal { --bs-modal-bg: var(--surface-overlay, var(--surface)); --bs-modal-zindex: var(--z-modal, 1055); }
+.offcanvas, .offcanvas-lg, .offcanvas-md, .offcanvas-sm { --bs-offcanvas-bg: var(--surface-overlay, var(--surface)); --bs-offcanvas-zindex: var(--z-offcanvas, 1045); }
+.modal-backdrop, .offcanvas-backdrop { --bs-backdrop-bg: var(--backdrop, #000); --bs-backdrop-opacity: 1; }
+.toast-container { --bs-toast-zindex: var(--z-toast, 1090); }
+
+/* Bootstrap components that hard-code its default blue (#0d6efd, #86b7fe, rgba(13,110,253,…)) point at the
+   brand tokens instead, in both themes. Here, not in section 1, so a refine picks it up with the layout base. */
+:root, [data-bs-theme] {
+  --bs-focus-ring-color: var(--focus-ring-color, var(--brand-secondary));
+  --bs-primary-text-emphasis: color-mix(in srgb, var(--brand-primary) 70%, var(--brand-secondary));
+  --bs-primary-bg-subtle: color-mix(in srgb, var(--brand-primary) 12%, var(--surface));
+  --bs-primary-border-subtle: color-mix(in srgb, var(--brand-primary) 40%, var(--surface));
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-color: var(--brand-on-primary);
+  --bs-btn-hover-bg: var(--brand-primary);
+  --bs-btn-hover-border-color: var(--brand-primary);
+  --bs-btn-active-color: var(--brand-on-primary);
+  --bs-btn-active-bg: var(--brand-primary-hover);
+  --bs-btn-active-border-color: var(--brand-primary-hover);
+  --bs-btn-disabled-color: var(--brand-primary);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--brand-primary);
+}
+.btn-outline-danger {
+  --bs-btn-color: var(--danger);
+  --bs-btn-border-color: var(--danger);
+  --bs-btn-hover-color: var(--on-danger, var(--surface));
+  --bs-btn-hover-bg: var(--danger);
+  --bs-btn-hover-border-color: var(--danger);
+  --bs-btn-active-color: var(--on-danger, var(--surface));
+  --bs-btn-active-bg: var(--danger);
+  --bs-btn-active-border-color: var(--danger);
+  --bs-btn-disabled-color: var(--danger);
+  --bs-btn-disabled-border-color: var(--danger);
+}
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  border-color: color-mix(in srgb, var(--brand-primary) 50%, var(--surface));
+  box-shadow: var(--focus-shadow);
+}
+.form-check-input:checked, .form-check-input[type="checkbox"]:indeterminate { background-color: var(--brand-primary); border-color: var(--brand-primary); }
+/* The switch knob on focus: Bootstrap draws it in #86b7fe; keep the unfocused knob instead */
+.form-switch .form-check-input:focus:not(:checked) { --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e"); }
+[data-bs-theme="dark"] .form-switch .form-check-input:focus:not(:checked) { --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 0.25%29'/%3e%3c/svg%3e"); }
+.form-range::-webkit-slider-thumb { background-color: var(--brand-primary); }
+.form-range::-webkit-slider-thumb:active { background-color: color-mix(in srgb, var(--brand-primary) 50%, var(--surface)); }
+.form-range::-moz-range-thumb { background-color: var(--brand-primary); }
+.form-range::-moz-range-thumb:active { background-color: color-mix(in srgb, var(--brand-primary) 50%, var(--surface)); }
+.form-range:focus::-webkit-slider-thumb { box-shadow: var(--focus-shadow); }
+.form-range:focus::-moz-range-thumb { box-shadow: var(--focus-shadow); }
+.btn-close { --bs-btn-close-focus-shadow: var(--focus-shadow); }
+.nav-pills { --bs-nav-pills-link-active-bg: var(--brand-primary); --bs-nav-pills-link-active-color: var(--brand-on-primary); }
+.nav-tabs { --bs-nav-tabs-link-active-color: var(--brand-primary); --bs-nav-tabs-link-active-border-color: var(--border) var(--border) var(--surface); }
+.pagination {
+  --bs-pagination-active-bg: var(--brand-primary);
+  --bs-pagination-active-border-color: var(--brand-primary);
+  --bs-pagination-active-color: var(--brand-on-primary);
+  --bs-pagination-focus-box-shadow: var(--focus-shadow);
+}
+.list-group { --bs-list-group-active-bg: var(--brand-primary); --bs-list-group-active-border-color: var(--brand-primary); --bs-list-group-active-color: var(--brand-on-primary); }
+.progress, .progress-stacked { --bs-progress-bar-bg: var(--brand-primary); }
+.dropdown-menu { --bs-dropdown-link-active-bg: var(--brand-primary); --bs-dropdown-link-active-color: var(--brand-on-primary); }
+.accordion { --bs-accordion-btn-focus-box-shadow: var(--focus-shadow); --bs-accordion-btn-active-icon: var(--bs-accordion-btn-icon); }
+
+/* ---------- 3. Layout primitives ---------- */
+
+/* Layout-02, Layout-10: one centred content width and the same gutter everywhere (replaces Bootstrap's stepped widths) */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+/* Bootstrap columns (.row > .col-*) inside a .container keep their content on the container's edge; gaps are tokens */
+.row { --bs-gutter-x: var(--space-5); --bs-gutter-y: var(--space-5); }
+
+/* Layout-10: a footer, if any, sits at the bottom of the window on short pages and after the content on long ones (never fixed over it) */
+body { min-height: 100vh; display: flex; flex-direction: column; }
+body > main { flex: 1 0 auto; }
+
+/* Layout-08: vertical rhythm. .stack = items in a section; .stack--sections = page sections */
+.stack { display: flex; flex-direction: column; gap: var(--item-gap); }
+.stack--sections { gap: var(--section-gap); }
+main.container { padding-block: var(--space-6) var(--space-8); }
+
+/* Layout-09: a row of inline items (icons, badges, buttons, filters), vertically centred */
+.cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.cluster--between { justify-content: space-between; }
+/* Layout-05: a row of fields and buttons lines up on the inputs' bottom edge, not the label-and-input centre */
+.cluster:has(> .field) { align-items: flex-end; gap: var(--space-4); }
+.icon { width: var(--icon-size); height: var(--icon-size); flex: none; }
+
+/* Layout-07: card / KPI grid: equal gaps, equal heights per row, content top-aligned */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--space-5);
+  align-items: stretch;
+}
+.grid > * { display: flex; flex-direction: column; justify-content: flex-start; margin: 0; }
+
+/* Layout-07: KPI rows hold at most 4 cards at any width (more KPIs: split them into groups of up to 4) */
+.grid--kpi { grid-template-columns: repeat(auto-fill, minmax(max(200px, calc((100% - 3 * var(--space-5)) / 4)), 1fr)); }
+
+/* Layout-07, Layout-13: cards in a row share their inner rows (subgrid), so matching parts line up across
+   the row even when their text differs in length. Every card has the same parts in the same order;
+   pick the modifier for the number of parts. Every part stays at the top of its row. */
+.grid--subgrid { --card-rows: 3; }
+.grid--rows-2 { --card-rows: 2; }
+.grid--rows-3 { --card-rows: 3; }
+.grid--rows-4 { --card-rows: 4; }
+.grid--subgrid > * {
+  display: grid;
+  grid-row: span var(--card-rows);
+  grid-template-rows: subgrid;
+  grid-template-columns: minmax(0, 1fr);  /* one full-width column (.grid > * sets justify-content: flex-start) */
+  row-gap: var(--space-3);
+  align-content: start;
+}
+.grid--subgrid > * > * { align-self: start; }
+
+/* App shell: the top bar (a Bootstrap .navbar) shares the page .container, so edges line up (Layout-10) */
+.app-header { background: var(--surface); border-bottom: 1px solid var(--border); padding-block: 0; }
+.app-header > .container { min-height: 64px; padding-block: var(--space-3); }
+.app-header .navbar-brand { margin: 0; padding-block: 0; }
+
+/* Layout-03: page title left, actions right, one row, vertically centred */
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+}
+.page-header > :first-child { min-width: 0; }
+
+/* Layout-04: button row: constant gap, right-aligned, primary LAST in the markup = right-most */
+.btn-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2); }
+.btn-row--start { justify-content: flex-start; }
+
+/* Layout-05: forms: each field one unit (label tight on its input), fields clearly apart, shared column widths;
+   errors are Bootstrap validation: .is-invalid on the control, .invalid-feedback right under it */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--form-cols), minmax(0, 1fr));
+  gap: var(--space-5) var(--space-6);
+  align-items: start;
+}
+.field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.field--full, .form-grid > .btn-row { grid-column: 1 / -1; }
+.form-grid > .btn-row { margin-top: var(--space-2); }  /* row gap + this = --space-6 from the last field to the actions */
+.field-error { font-size: 0.875em; color: var(--bs-form-invalid-color); }  /* legacy alias: pages built before Bootstrap validation, kept so a refine copy still shows their errors */
+
+/* Layout-06: tables (.table) scroll in their own container; text left-aligned, numbers and amounts right-aligned
+   with tabular figures (.num on the th and every td of the column, so the header lines up with its column);
+   row actions last, right-aligned */
+.table-wrap { position: relative; width: 100%; overflow-x: auto; }  /* relative: Bootstrap's absolute .visually-hidden stays inside the scroll box */
+.table-wrap .table th, .table-wrap .table td { text-align: left; vertical-align: middle; }
+.table-wrap .table .num, .table-wrap .table .col-actions { text-align: right; }
+.table-wrap .table th { font-size: var(--font-size-sm, 13px); font-weight: var(--font-weight-semibold, 600); color: var(--text-muted); }
+.table-wrap .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.table-wrap .col-status { white-space: nowrap; }
+.table-wrap .col-actions { white-space: nowrap; width: 1%; }
+
+/* Layout-11: charts: full width of their container, one fixed height; SVG viewBox = the drawn width x --chart-h */
+svg.chart { display: block; width: 100%; height: var(--chart-h); }
+
+/* ---------- 4. Responsive (Layout-11): below 768px (Bootstrap's md breakpoint) ---------- */
+@media (max-width: 767.98px) {
+  :root { --gutter: var(--space-4); }                 /* 16px side gutter */
+  .form-grid { grid-template-columns: 1fr; }          /* one form column */
+  .page-header { align-items: flex-start; }           /* title row, then actions row */
+  .page-header > .btn-row { width: 100%; }
+  .btn-row { flex-direction: column-reverse; align-items: stretch; } /* full width, primary on top */
+  .btn-row > * { width: 100%; }
+  /* Layout-14: touch targets at least --target-min (44px) tall on small screens */
+  .btn, .btn-sm, .form-control, .form-select, .form-select-sm, .nav-link, .page-link, .dropdown-item { min-height: var(--target-min, 44px); }
+  .nav-link, .page-link, .dropdown-item { display: flex; align-items: center; }
+  .btn-close { padding: calc((var(--target-min, 44px) - 1em) / 2); }
+  /* Optional: tables that collapse into cards: add .table-wrap--cards and data-label on each td */
+  .table-wrap--cards thead { display: none; }
+  .table-wrap--cards .table tr { display: block; padding-block: var(--space-2); border-bottom: 1px solid var(--border); }
+  .table-wrap--cards .table td, .table-wrap--cards .table td.num { display: block; position: relative; padding-left: 40%; text-align: right; border: 0; }  /* label left, value right: a readable pair (Layout-06) */
+  .table-wrap--cards .table td::before { content: attr(data-label); position: absolute; left: var(--space-3); color: var(--text-muted); }
+  .table-wrap--cards .table td.col-actions { width: auto; }
+}
+
+/* ---------- 5. Kit components (agent/reference/ui/kit/components.css, structure only; StarHub looks replaced by the canvas, RC-209) ---------- */
+
+/* Buttons: canvas 40px controls, 16px bold labels (Lato has no 600), radius 4; outline button white with the outline edge */
+.btn { --bs-btn-font-weight: var(--font-weight-semibold); --bs-btn-font-size: var(--font-size); --bs-btn-padding-x: var(--space-5); }
+.btn-sm { --bs-btn-font-size: var(--font-size-sm); --bs-btn-padding-x: var(--space-3); }
+.btn-outline-secondary { --bs-btn-bg: var(--surface-2); --bs-btn-color: var(--brand-secondary); --bs-btn-border-color: var(--border-control); --bs-btn-hover-bg: var(--brand-soft); --bs-btn-hover-color: var(--brand-accent); --bs-btn-hover-border-color: var(--brand-accent); --bs-btn-active-bg: var(--brand-soft); --bs-btn-active-color: var(--brand-accent); --bs-btn-active-border-color: var(--brand-accent); }
+.btn-link { --bs-btn-color: var(--brand-link); --bs-btn-hover-color: var(--brand-primary-hover); --bs-btn-active-color: var(--brand-primary-hover); }
+
+/* Lead text under a page or section title (canvas lead 20/30) */
+.lead { font-size: var(--font-size-lead); font-weight: var(--font-weight-regular); line-height: 1.5; color: var(--text-muted); }
+
+/* KPI card: label, value, note */
+.kpi__label { color: var(--text-muted); font-size: var(--font-size-sm); }
+.kpi__value { font-size: var(--font-size-xl); font-weight: var(--font-weight-black); line-height: var(--line-height-tight); color: var(--heading); font-variant-numeric: tabular-nums; }
+.kpi__note { color: var(--text-muted); font-size: var(--font-size-xs); }
+
+/* Attention strip: a Bootstrap .alert that leads a list page */
+.alert--strip { border-left: 4px solid; }
+.alert--strip.alert-danger { border-left-color: var(--danger-strong); }
+.alert--strip.alert-warning { border-left-color: var(--warning-strong); }
+.alert--strip .alert-heading { font-size: var(--font-size); font-weight: var(--font-weight-semibold); }
+
+/* Selected table row */
+.table-wrap .table tr.is-selected > * { --bs-table-bg-state: var(--brand-primary-soft); }
+
+/* Empty state: says what the list is for and the next action */
+.empty-state { color: var(--text-muted); padding: var(--space-5) var(--space-4); border: 1px dashed var(--border-strong); border-radius: var(--radius-card); margin: 0; }
+.empty-state__title { color: var(--heading); font-weight: var(--font-weight-semibold); }
+
+/* Detail data: a <dl class="row"> of label and value pairs */
+.data-list { --bs-gutter-y: var(--space-1); }
+.data-list dt { color: var(--text-muted); font-weight: var(--font-weight-regular); font-size: var(--font-size-sm); }
+.data-list dd { color: var(--brand-secondary); margin-bottom: var(--space-3); }
+
+/* Audit timeline: newest first, one entry per transition; the newest dot in Brand primary */
+.timeline { list-style: none; padding: 0; margin: 0; border-left: 2px solid var(--border); }
+.timeline > li, .timeline__item { position: relative; padding: 0 0 var(--space-4) var(--space-5); }
+.timeline > li::before, .timeline__item::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--border-control); }
+.timeline > li:first-child::before, .timeline__item:first-child::before { border-color: var(--brand-accent); background: var(--brand-accent); }
+.timeline__meta { color: var(--text-muted); font-size: var(--font-size-xs); }
+
+/* Charts (RC-226): series colours from the tokens; every series also has a text label */
+.chart__series-1, .chart__bar, .chart__s1 { fill: var(--chart-1); stroke: var(--chart-1); }
+.chart__series-2, .chart__s2 { fill: var(--chart-2); stroke: var(--chart-2); }
+.chart__series-3, .chart__s3 { fill: var(--chart-3); stroke: var(--chart-3); }
+.chart__series-4, .chart__s4 { fill: var(--chart-4); stroke: var(--chart-4); }
+.chart__series-5, .chart__s5 { fill: var(--chart-5); stroke: var(--chart-5); }
+.chart__s6 { fill: var(--neutral); stroke: var(--neutral); }
+.chart__axis, .chart__grid { stroke: var(--chart-grid); }
+.chart__label { fill: var(--text-muted); font-size: var(--font-size-xs); }
+.chart__value { fill: var(--brand-secondary); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+.chart__hole { fill: var(--surface-2); }
+.chart__total { fill: var(--heading); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+.chart__line { fill: none; stroke: var(--chart-1); stroke-width: 2; }
+.chart__line--2 { stroke: var(--chart-2); stroke-dasharray: 6 4; }
+.chart__dot { fill: var(--chart-1); }
+.chart text { font-family: var(--font-family); }
+
+/* Style guide page only */
+.swatch { height: var(--space-7); border-radius: var(--radius-card); border: 1px solid var(--border); }
+.swatch--brand-primary { background: var(--brand-primary); }
+.swatch--brand-accent { background: var(--brand-accent); }
+.swatch--brand-soft { background: var(--brand-soft); }
+.swatch--heading { background: var(--heading); }
+.swatch--text-muted { background: var(--text-muted); }
+.swatch--surface { background: var(--surface); }
+.swatch--surface-2 { background: var(--surface-2); }
+.swatch--surface-3 { background: var(--surface-3); }
+.swatch--border { background: var(--border); }
+.swatch--divider { background: var(--divider); }
+.swatch--border-control { background: var(--border-control); }
+.swatch--focus-border { background: var(--focus-border); }
+.swatch--footer-bg { background: var(--footer-bg); }
+.swatch--success { background: var(--success); }
+.swatch--success-bg { background: var(--success-bg); }
+.swatch--warning { background: var(--warning); }
+.swatch--warning-bg { background: var(--warning-bg); }
+.swatch--danger { background: var(--danger); }
+.swatch--danger-bg { background: var(--danger-bg); }
+.swatch--info { background: var(--info); }
+.swatch--info-bg { background: var(--info-bg); }
+.swatch--neutral { background: var(--neutral); }
+.swatch--chart-1 { background: var(--chart-1); }
+.swatch--chart-2 { background: var(--chart-2); }
+.swatch--chart-3 { background: var(--chart-3); }
+.swatch--chart-4 { background: var(--chart-4); }
+.swatch--chart-5 { background: var(--chart-5); }
+
+/* ---------- 6. Project components (design-system-v4.md): colour, border, radius and type; layout stays with sections 2 to 4 ---------- */
+
+/* Type (canvas section 03): headings in Heading grey, tracked -1 %; page title 32/40 Bold */
+body { -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, .h1, .h2, .h3, .h4 { color: var(--heading); letter-spacing: var(--letter-spacing-heading); }
+h1, .h1 { font-weight: var(--font-weight-heading); line-height: 1.25; }
+h3, .h3 { line-height: 1.5; }
+.h5, .h6 { font-weight: var(--font-weight-semibold); color: var(--heading); }
+.h6 { font-size: var(--font-size); }
+.form-label, .table thead th { font-weight: var(--font-weight-semibold); }
+.form-label, legend.form-label { font-size: var(--font-size); line-height: var(--line-height); }   /* canvas: 16px bold labels */
+.table thead th { font-size: var(--font-size-xs); }
+.eyebrow { font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+/* League Gothic display: the launcher headline only (RC-219) */
+.display-title, .lead-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(3rem, 7vw, var(--font-size-display)); line-height: 1; letter-spacing: 0.01em; text-transform: uppercase; color: var(--heading); }
+
+/* Icons (RC-221): Phosphor-style inline SVG, one size; violet beside headings */
+.icon { width: var(--icon-size); height: var(--icon-size); flex: none; }
+h1 > .icon, h2 > .icon, h3 > .icon, .icon--brand { color: var(--brand-accent); }
+
+/* Shell (canvas section 06): white sticky 64px bar, soft shadow; grey nav, active violet with a 1px underline */
+.app-header { position: sticky; top: 0; z-index: var(--z-sticky); background: var(--surface-2); box-shadow: var(--shadow-header); border-bottom: 0; }
+html { scroll-padding-top: 5rem; }   /* (v03) a section scrolled to stops below the sticky header */
+.brand { display: inline-flex; align-items: center; gap: var(--space-2); text-decoration: none; }
+.brand__tile { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-button); background: var(--brand-primary); color: var(--brand-on-primary); font-family: var(--font-display); font-size: 24px; line-height: 1; }
+.brand__mark { font-family: var(--font-display); font-size: 28px; line-height: 1; letter-spacing: 0.02em; color: var(--heading); text-transform: uppercase; }
+.app-nav .nav-link { color: var(--nav-text); font-size: var(--font-size-sm); padding-inline: var(--space-2); border-bottom: 1px solid transparent; border-radius: 0; }
+.app-nav .nav-link:hover { color: var(--brand-accent); }
+.app-nav .nav-link[aria-current="page"] { color: var(--brand-accent); font-weight: var(--font-weight-semibold); border-bottom-color: var(--brand-accent); }
+.app-header .btn-outline-secondary .icon { color: var(--brand-accent); }
+.navbar-toggler { border-color: var(--border-control); }
+.app-header .navbar-collapse { flex-grow: 1; gap: var(--space-3); }
+/* A role with a long menu keeps one header row: its name is visually hidden beside the initials (still read out) */
+@media (min-width: 1200px) { .app-header:has(.app-nav > :nth-child(7 of :not([hidden]))) .role-avatar > :not(.role-avatar__initials) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
+@media (max-width: 1199.98px) {
+  .app-header .navbar-collapse.show, .app-header .navbar-collapse.collapsing { flex-direction: column; align-items: flex-start; padding-block: var(--space-3); }
+  .app-header .app-nav { flex-direction: column; }
+}
+/* Menus: canvas nav menu (14/20, 8 x 16, radius 4) and profile menu shadow */
+.dropdown-menu { --bs-dropdown-bg: var(--surface-overlay); --bs-dropdown-border-color: transparent; --bs-dropdown-border-radius: var(--radius-button); --bs-dropdown-box-shadow: var(--shadow-2); --bs-dropdown-font-size: var(--font-size-sm); --bs-dropdown-item-padding-y: var(--space-2); --bs-dropdown-item-padding-x: var(--space-4); --bs-dropdown-link-color: var(--brand-secondary); --bs-dropdown-link-hover-bg: var(--brand-soft); --bs-dropdown-link-hover-color: var(--brand-accent); --bs-dropdown-link-active-bg: var(--brand-soft); --bs-dropdown-link-active-color: var(--brand-accent); box-shadow: var(--shadow-2); }
+/* Role avatar: Brand soft circle with the initials, then the role name */
+.role-avatar { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--brand-secondary); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+.role-avatar__initials { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-accent); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); flex: none; }
+
+/* Footer (canvas section 06, RC-214): Brand strong band, white 80 % / 60 %, the CC-Demo League Gothic watermark at 10 % */
+.site-footer { position: relative; overflow: hidden; background: var(--footer-bg); color: var(--footer-text); padding-block: var(--space-7); font-size: var(--font-size-sm); }
+.site-footer strong { color: var(--footer-heading); font-family: var(--font-display); font-weight: 400; font-size: 24px; letter-spacing: 0.02em; text-transform: uppercase; }
+.site-footer::after { content: "CC-Demo"; position: absolute; right: -0.04em; bottom: -0.22em; font-family: var(--font-display); font-size: clamp(6rem, 18vw, 14rem); line-height: 1; text-transform: uppercase; color: var(--footer-watermark); pointer-events: none; }
+.site-footer .container { position: relative; z-index: 1; }
+.site-footer a { color: var(--footer-heading); }
+
+/* Cards (canvas section 04, RC-224): white, radius 8, a wide low glow instead of a border; dark adds a 1px border */
+.card { --bs-card-bg: var(--surface-2); --bs-card-border-radius: var(--radius-card); --bs-card-spacer-y: var(--panel-pad); --bs-card-spacer-x: var(--panel-pad); --bs-card-cap-bg: transparent; box-shadow: var(--shadow-1); border: 0; transition: box-shadow var(--duration-fast) var(--easing-standard); }
+a.card:hover, .card:has(> .stretched-link):hover, .module-card:hover { box-shadow: var(--shadow-1-hover); }
+[data-bs-theme="dark"] .card { border: 1px solid var(--border); }
+.card-title { font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--heading); }
+
+/* The request journey rail in the canvas stepper look (RC-230): numbered circles, the current step in Brand primary */
+.journey { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.journey__step { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); color: var(--text-muted); font-size: var(--font-size-sm); }
+.journey__step::before { content: ""; position: absolute; top: 14px; left: 32px; right: var(--space-2); height: 2px; background: var(--divider); }
+.journey__step:last-child::before { display: none; }
+.journey__num { position: relative; z-index: 1; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border-control); background: var(--surface-2); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--text-muted); }
+.journey__step.is-done, .journey__step.is-current { color: var(--brand-accent); font-weight: var(--font-weight-semibold); }
+.journey__step.is-done::before { background: var(--brand-accent); }
+.journey__step.is-done .journey__num { background: var(--brand-accent); border-color: var(--brand-accent); color: var(--surface-2); }
+.journey__step.is-current .journey__num { background: var(--brand-soft); border-color: var(--brand-accent); color: var(--brand-accent); }
+.journey__step.is-problem { color: var(--danger); font-weight: var(--font-weight-semibold); }
+.journey__step.is-problem .journey__num { background: var(--danger-bg); border-color: var(--danger-strong); color: var(--danger); }
+.journey__next { font-size: var(--font-size); color: var(--brand-secondary); }
+.journey--compact { display: inline-flex; gap: 6px; align-items: center; }
+.journey--compact .journey__dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--border-control); background: transparent; }
+.journey--compact .journey__dot.is-done, .journey--compact .journey__dot.is-current { background: var(--brand-accent); border-color: var(--brand-accent); }
+.journey--compact .journey__dot.is-current { box-shadow: 0 0 0 3px var(--brand-soft); }
+.journey--compact .journey__dot.is-problem { background: var(--danger-strong); border-color: var(--danger-strong); }
+@media (max-width: 767.98px) {
+  .journey { grid-template-columns: 1fr; row-gap: var(--space-3); }
+  .journey__step { flex-direction: row; align-items: center; }
+  .journey__step::before { top: 30px; left: 13px; right: auto; width: 2px; height: var(--space-3); }
+}
+
+/* Buttons the screens add: card buttons (Story-037) in Brand primary, danger in the notice red */
+.btn-alt, .btn-outline-alt { --bs-btn-focus-box-shadow: var(--focus-shadow); }
+.btn-alt { --bs-btn-color: var(--color-white); --bs-btn-bg: var(--brand-accent); --bs-btn-border-color: var(--brand-accent); --bs-btn-hover-color: var(--color-white); --bs-btn-hover-bg: var(--brand-primary); --bs-btn-hover-border-color: var(--brand-primary); --bs-btn-active-color: var(--color-white); --bs-btn-active-bg: var(--brand-primary); --bs-btn-active-border-color: var(--brand-primary); }
+[data-bs-theme="dark"] .btn-alt { --bs-btn-color: var(--brand-on-primary); --bs-btn-hover-color: var(--brand-on-primary); --bs-btn-active-color: var(--brand-on-primary); }
+.btn-outline-alt { --bs-btn-color: var(--brand-accent); --bs-btn-border-color: var(--brand-accent); --bs-btn-hover-color: var(--brand-accent); --bs-btn-hover-bg: var(--brand-soft); --bs-btn-hover-border-color: var(--brand-accent); --bs-btn-active-color: var(--brand-accent); --bs-btn-active-bg: var(--brand-soft); --bs-btn-active-border-color: var(--brand-accent); }
+.btn-danger { --bs-btn-color: var(--on-danger); --bs-btn-bg: var(--danger); --bs-btn-border-color: var(--danger); --bs-btn-hover-color: var(--on-danger); --bs-btn-hover-bg: var(--danger); --bs-btn-hover-border-color: var(--danger); --bs-btn-active-color: var(--on-danger); --bs-btn-active-bg: var(--danger); --bs-btn-active-border-color: var(--danger); }
+
+/* Option tiles and time slots (RC-230): a hidden radio (.btn-check) + its label; slots as canvas pill chips */
+.option-tile { display: flex; flex-direction: column; gap: 2px; min-height: 48px; padding: var(--space-3) var(--space-4); border: 1px solid var(--border-control); border-radius: var(--radius-button); background: var(--surface-2); color: var(--brand-secondary); cursor: pointer; }
+.option-tile:hover { border-color: var(--brand-accent); }
+.btn-check:checked + .option-tile { border-color: var(--brand-accent); background: var(--brand-soft); color: var(--brand-accent); }
+.btn-check:focus-visible + .option-tile { box-shadow: var(--focus-shadow); }
+.slot-chip, .avail td.slot .btn, .tee-slot { border-radius: var(--radius-pill); }
+.slot-chip { display: inline-flex; align-items: center; min-height: var(--control-h-sm); padding: 0 var(--space-4); border: 1px solid var(--border-control); background: var(--surface-2); color: var(--brand-secondary); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); text-decoration: none; }
+.slot-chip:hover { border-color: var(--brand-accent); color: var(--brand-accent); }
+.btn-check:checked + .slot-chip, .slot-chip.is-selected { background: var(--brand-soft); border-color: var(--brand-accent); color: var(--brand-accent); }
+
+/* Fields: canvas 40px fields; edges at 3:1 come from base.css (--border-control); focused field: focus border inside the ring */
+.form-control, .form-select { background-color: var(--surface-2); color: var(--brand-secondary); }
+.form-control:focus, .form-select:focus { border-color: var(--focus-border); }
+.form-control:disabled, .form-select:disabled { background-color: var(--surface-disabled); }
+.form-check-input:checked { background-color: var(--brand-accent); border-color: var(--brand-accent); }
+/* Targets at least 24 x 24px (WCAG 2.5.8, axe target-size): checkboxes, radios and switches, and the record links in tables */
+.form-check { min-height: 24px; padding-left: 2.25rem; }
+.form-check .form-check-input { width: 24px; height: 24px; margin-top: 0; margin-left: -2.25rem; }
+.form-switch { padding-left: 3.5rem; }
+.form-switch .form-check-input { width: 44px; height: 24px; margin-left: -3.5rem; }
+.form-check-label { line-height: 24px; }
+.table-wrap td > a, .table-wrap td > strong > a { display: inline-block; padding-block: 3px; }
+.required::after { content: " *"; color: var(--danger); }
+
+/* Tables (Layout-06, D-248 retired): text left, numbers right (base.css); canvas caption headers, row dividers, alternating shading (D-249) */
+.table { --bs-table-bg: var(--surface-2); --bs-table-color: var(--brand-secondary); --bs-table-border-color: var(--divider); }
+.table thead th { background: var(--surface); color: var(--text-muted); border-bottom-color: var(--divider); text-transform: none; }
+.table td:first-child > a { font-weight: var(--font-weight-semibold); text-decoration: none; }
+.table-wrap .table > :not(caption) > * > * { padding: var(--space-3); }
+.table-wrap .table > tbody > tr:nth-of-type(even) > * { --bs-table-bg-type: var(--surface); }
+.table-wrap .table > tbody > tr:hover > *, .table-wrap .table > tbody > tr:focus-within > * { --bs-table-bg-state: var(--brand-soft); }
+.table-wrap { background: var(--surface-2); border-radius: var(--radius-card); box-shadow: var(--shadow-panel); }
+[data-bs-theme="dark"] .table-wrap { border: 1px solid var(--border); }
+.card .table-wrap { box-shadow: none; border: 0; }
+.table td:first-child > strong, .table td:first-child > a:first-child { white-space: nowrap; }   /* (v05) a record ID never breaks (D-333) */
+/* (v08) Tee sheet: the Morning and Afternoon tables share one fixed set of column widths, so their columns line up */
+@media (min-width: 768px) {
+  .table--tee { table-layout: fixed; }
+  .table--tee th:nth-child(1) { width: 10%; } .table--tee th:nth-child(2) { width: 34%; } .table--tee th:nth-child(3) { width: 16%; }
+  .table--tee th:nth-child(4) { width: 12%; } .table--tee th:nth-child(5) { width: 16%; } .table--tee th:nth-child(6) { width: 12%; }
+  .table--tee td { overflow-wrap: anywhere; }
+}
+
+/* Badges and chips: canvas caption 12 bold, pill; one height (Layout-09) */
+.badge { border: 1px solid transparent; border-radius: var(--radius-pill); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); padding: 0.3em 0.75em; letter-spacing: 0; }
+:root, [data-bs-theme] { --bs-primary-text-emphasis: var(--brand-accent); --bs-primary-bg-subtle: var(--brand-soft); --bs-primary-border-subtle: var(--focus-border); }
+.badge.bg-primary-subtle { border-color: var(--focus-border); }
+.badge-hold { color: var(--warning); background: var(--warning-bg); border-color: var(--warning-strong); }
+
+/* Notices (canvas section 05): text on the tint, radius 5, no border */
+.alert { --bs-alert-border-radius: var(--radius-notice); --bs-alert-border-color: transparent; border: 0; font-size: var(--font-size-sm); }
+.alert-warning { --bs-alert-color: var(--warning); --bs-alert-bg: var(--warning-bg); }
+.alert-danger { --bs-alert-color: var(--danger); --bs-alert-bg: var(--danger-bg); }
+.alert-info { --bs-alert-color: var(--info); --bs-alert-bg: var(--info-bg); }
+.alert-success { --bs-alert-color: var(--success); --bs-alert-bg: var(--success-bg); }
+.alert-light { --bs-alert-color: var(--brand-secondary); --bs-alert-bg: var(--surface-2); --bs-alert-border-color: var(--border); }
+.blocked-panel { background: var(--danger-bg); border: 2px solid var(--danger-strong); border-radius: var(--radius-notice); padding: var(--space-4) var(--space-5); color: var(--brand-secondary); }
+.blocked-panel__title { color: var(--danger); font-weight: var(--font-weight-semibold); }
+/* Toast: success on its tint; error on the error tint */
+.toast { --bs-toast-bg: var(--success-bg); --bs-toast-color: var(--brand-secondary); --bs-toast-border-color: transparent; --bs-toast-box-shadow: var(--shadow-2); --bs-toast-border-radius: var(--radius-card); font-weight: var(--font-weight-semibold); }
+.toast[data-state="error"] { --bs-toast-bg: var(--danger-bg); }
+.toast-host { position: fixed; top: var(--space-8); right: var(--space-4); z-index: var(--z-toast); }
+/* Dialog and the guide panel: canvas dialog shadow and 50 % scrim (RC-231) */
+.modal { --bs-modal-bg: var(--surface-overlay); --bs-modal-border-radius: var(--radius-card); --bs-modal-border-color: transparent; --bs-modal-box-shadow: var(--shadow-3); }
+.modal-content { box-shadow: var(--shadow-3); }
+.nav-tabs { --bs-nav-tabs-link-active-color: var(--brand-accent); --bs-nav-tabs-link-active-bg: var(--surface-2); --bs-nav-tabs-border-color: var(--border); --bs-nav-tabs-link-active-border-color: var(--border) var(--border) var(--surface-2); --bs-nav-link-color: var(--nav-text); --bs-nav-link-hover-color: var(--brand-accent); flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; }
+.nav-tabs .nav-link { white-space: nowrap; font-weight: var(--font-weight-semibold); }
+.nav-pills { --bs-nav-pills-border-radius: var(--radius-pill); --bs-nav-pills-link-active-bg: var(--brand-soft); --bs-nav-pills-link-active-color: var(--brand-accent); --bs-nav-link-color: var(--nav-text); --bs-nav-link-hover-color: var(--brand-accent); }
+.nav-pills .nav-link { font-weight: var(--font-weight-semibold); }
+
+/* Launcher (Story-037; layout kept, RC-211): collapsible sections, module cards in the canvas card look, no photos */
+.launch-acc { --bs-accordion-border-color: transparent; --bs-accordion-border-radius: var(--radius-card); --bs-accordion-inner-border-radius: var(--radius-card); --bs-accordion-btn-bg: var(--surface-2); --bs-accordion-active-bg: var(--surface-2); --bs-accordion-active-color: var(--heading); --bs-accordion-bg: var(--surface-2); --bs-accordion-body-padding-x: var(--panel-pad); --bs-accordion-btn-padding-x: var(--panel-pad); --bs-accordion-btn-padding-y: var(--space-4); box-shadow: var(--shadow-1); border-radius: var(--radius-card); }
+.launch-acc .accordion-button::after { filter: none; }
+.launch-acc__title { font-weight: var(--font-weight-heading); font-size: var(--font-size-lg); line-height: 1.5; color: var(--heading); letter-spacing: var(--letter-spacing-heading); }
+.launch-acc__hint { color: var(--text-muted); font-size: var(--font-size-sm); font-weight: var(--font-weight-regular); }
+.module-card .icon { color: var(--brand-accent); }
+.module-card__icon { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-card); background: var(--brand-soft); color: var(--brand-accent); }
+.module-card__meta { color: var(--text-muted); font-size: var(--font-size-sm); font-variant-numeric: tabular-nums; }
+.member-tabs { --bs-accordion-btn-bg: var(--brand-soft); --bs-accordion-active-bg: var(--brand-soft); --bs-accordion-active-color: var(--heading); --bs-accordion-border-color: var(--focus-border); }
+.member-tabs__label .icon { color: var(--brand-accent); }
+.member-tabs__title { font-weight: var(--font-weight-semibold); }
+.member-tabs__hint { color: var(--text-muted); font-size: var(--font-size-sm); }
+.member-tabs .accordion-button > .badge { margin-left: auto; margin-right: var(--space-3); }
+.role-link { --bs-list-group-action-color: var(--brand-accent); --bs-list-group-action-hover-color: var(--brand-primary); --bs-list-group-action-hover-bg: var(--brand-soft); --bs-list-group-action-active-bg: var(--brand-soft); color: var(--brand-accent); font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px; }
+.role-link .icon { vertical-align: -4px; margin-left: var(--space-1); }
+.role-hint { font-weight: var(--font-weight-regular); color: var(--text-muted); }
+@media (min-width: 992px) {
+  .list-cols > .list-group-item { flex: 0 0 calc(100% / var(--list-cols)); min-width: 0; }
+  .list-cols-5 { --list-cols: 5; } .list-cols-6 { --list-cols: 6; }
+}
+
+/* Request detail: gate checklist (status icons in the canvas brights, with their words) */
+.gate { color: var(--brand-secondary); }
+.gate--ok .icon { color: var(--success-strong); }
+.gate--fail .icon { color: var(--danger-strong); }
+.gate--wait .icon { color: var(--warning-strong); }
+
+/* Facts list */
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: var(--space-3) var(--space-5); margin: 0; }
+.facts dt { font-size: var(--font-size-sm); font-weight: var(--font-weight-regular); color: var(--text-muted); }
+.facts dd { margin: 0; font-weight: var(--font-weight-semibold); color: var(--heading); }
+.facts--list { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+.facts--list > div { display: grid; grid-template-columns: 11rem minmax(0, 1fr); column-gap: var(--space-4); align-items: baseline; }
+.facts--list dt { font-size: var(--font-size); }
+@media (max-width: 767.98px) { .facts--list { gap: var(--space-3); } .facts--list > div { grid-template-columns: minmax(0, 1fr); } }
+
+/* Digital membership card (Brand strong, white text, QR on white so it reads in both themes) */
+.member-card { background: var(--footer-bg); color: var(--color-white); border-radius: var(--radius-card); padding: var(--panel-pad); box-shadow: var(--shadow-1); }
+.member-card__label { color: var(--footer-heading); font-size: var(--font-size-sm); }
+.member-card__id { font-size: 1.5rem; font-weight: var(--font-weight-black); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+.qr { width: 128px; height: 128px; background: var(--qr-bg); padding: var(--space-2); border-radius: var(--radius-button); }
+.qr rect { fill: var(--qr-fg); }
+.qr .qr__gap { fill: var(--qr-bg); }
+
+/* Scenario guide side panel (agent/reference/ui/scenario-guide.md; RC-231): the current step in Brand primary */
+.guide-panel { --bs-offcanvas-width: 380px; max-width: 100%; box-shadow: var(--shadow-3); }
+.guide-step--here { border-inline-start: 4px solid var(--brand-accent); background: var(--brand-soft); }
+@media (min-width: 1200px) { body:has(.guide-panel.show) { padding-right: 380px; } }
+@media (min-width: 768px) { .page-header { flex-wrap: nowrap; } .page-header > :not(:first-child) { flex-shrink: 0; } }
+
+/* Focus (RC-218): the base.css ring, in Brand primary, on the controls Bootstrap strips */
+.navbar-toggler:focus-visible, .accordion-button:focus-visible, .list-group-item-action:focus-visible, .dropdown-item:focus-visible { outline: 0; box-shadow: var(--focus-shadow); }
+a:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+
+/* Tab panes that are a .stack keep their gaps */
+.tab-content > .tab-pane.stack.active { display: flex; }
+/* Row actions stay on one line; (v04) wrapping actions move whole buttons */
+/* Row actions: inline buttons ending on the cell's right edge, wrapping whole when the column is narrow (Layout-06) */
+.table-wrap td.col-actions .cluster { display: block; text-align: right; }
+.table-wrap td.col-actions .cluster > * { display: inline-block; vertical-align: middle; margin-block: 2px; }
+.table-wrap td.col-actions .cluster > * + * { margin-left: var(--space-2); }
+.table-wrap td.col-actions--wrap { white-space: normal; width: auto; }
+.table-wrap td.col-actions--wrap .btn { white-space: nowrap; }
+
+/* (v05) Facilities availability grid: the resource column stays in view while the grid scrolls sideways */
+.avail th:first-child, .avail td:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface-2); }
+.avail td.slot { min-width: 96px; }
+/* (v05) Occupancy meter */
+.occupancy { width: 100%; height: 1rem; accent-color: var(--brand-accent); }
+
+/* (v02) Report print layout (Export PDF, BR-034): the result only, black on white, header row repeated on each page */
+@media print {
+  .app-header, .site-footer, .toast-host, .guide-panel, .report-params, .no-print, [data-export], [data-change], .page-header .btn-row { display: none !important; }
+  body { background: #fff; color: #000; padding: 0 !important; }
+  .table-wrap { overflow: visible; box-shadow: none; }
+  .table thead { display: table-header-group; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
+
+/* Touch targets at least 44px on phones (Layout-14); last, so it wins */
+@media (max-width: 767.98px) {
+  .btn, .btn-sm, .app-nav .nav-link, .form-control, .form-select, .navbar-toggler, .nav-tabs .nav-link, .nav-pills .nav-link, .slot-chip { min-height: var(--target-min); }
+  .site-footer::after { font-size: 6rem; }
+  .table-wrap--cards .table td.num { white-space: normal; }   /* a long value wraps inside its card instead of running past the edge */
+}
+
+/* (v08) Content scales to the window: no sideways scrolling (user instruction, D-405).
+   Cells wrap instead of widening the table; row-action buttons wrap whole; record IDs stay on one line */
+.table-wrap .num, .table-wrap .col-status, .table-wrap .col-actions { white-space: normal; }
+.table-wrap .table th, .table-wrap .table td { overflow-wrap: break-word; hyphens: auto; }
+.table-wrap td.col-actions .btn, .table-wrap .badge { white-space: nowrap; }
+/* Tablet (768 – 991px): tables marked for cards show as cards here too, as on phones */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .table-wrap--cards thead { display: none; }
+  .table-wrap--cards .table tr { display: block; padding-block: var(--space-2); border-bottom: 1px solid var(--border); }
+  .table-wrap--cards .table td, .table-wrap--cards .table td.num { display: block; position: relative; padding-left: 40%; text-align: right; border: 0; }
+  .table-wrap--cards .table td::before { content: attr(data-label); position: absolute; left: var(--space-3); color: var(--text-muted); }
+  .table-wrap--cards .table td.col-actions { width: auto; }
+}
+/* (v08) Facilities availability grid fits the content width: fixed columns, compact slot chips, wrapping badges */
+@media (min-width: 768px) {
+  .table.avail { table-layout: fixed; }
+  .table.avail th:first-child { width: 140px; }
+  .avail td.slot, .avail th { min-width: 0; padding-inline: var(--space-1); font-size: var(--font-size-xs); }
+  .avail .slot-chip { padding: 0 var(--space-2); font-size: var(--font-size-xs); }
+  .avail .badge { white-space: normal; overflow-wrap: anywhere; }
+}
+/* (v08) Long report names in the first column wrap (the one-line rule is for record IDs) */
+.table--names td:first-child > strong { white-space: normal; }
+/* (v08) Resort rooms x nights grid fits a phone too */
+@media (max-width: 767.98px) {
+  .table.avail--nights { table-layout: fixed; }
+  .table.avail--nights th:first-child { width: 88px; }
+  .avail--nights td, .avail--nights th { min-width: 0; padding-inline: 2px; font-size: var(--font-size-xs); overflow-wrap: anywhere; }
+  .avail--nights .badge { white-space: normal; }
+}
+/* (v08) An empty table's message fills the table width (its text stays short, Layout-15) */
+.table .empty-state { max-width: none; }

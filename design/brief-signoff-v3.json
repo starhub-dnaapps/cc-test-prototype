@@ -1,0 +1,468 @@
+{
+  "title": "CC-Demo club management system: Membership module (v01)",
+  "pm": {
+    "problem": "NSRCC runs membership on a customised legacy system in use since about 2000, with duplicate manual steps, legacy sub-ledgers and obsolete processing. The club needs a configuration-driven Membership module that controls every lifecycle event through approval, document and payment gates, keeps full audit history, and hands financial values to Finance instead of owning them.",
+    "users": [
+      {
+        "role": "Membership Officer",
+        "goal": "Capture applications and requests correctly, first time",
+        "context": "Membership counter and back office, office hours",
+        "device": "desktop"
+      },
+      {
+        "role": "Approver",
+        "goal": "Decide requests quickly with the evidence in front of them and record Finance-stub payments",
+        "context": "Back office, from an inbox",
+        "device": "desktop"
+      },
+      {
+        "role": "Membership Manager",
+        "goal": "Authorise exceptions, long extensions, suspensions and goodwill refunds; read the dashboard",
+        "context": "Office",
+        "device": "desktop"
+      },
+      {
+        "role": "Membership Administrator",
+        "goal": "Keep policy and master data right without code changes; create corporate memberships",
+        "context": "Office",
+        "device": "desktop"
+      },
+      {
+        "role": "Member",
+        "goal": "See my card and membership; renew, update my profile or withdraw",
+        "context": "Home or on the move, in the member portal",
+        "device": "both"
+      }
+    ],
+    "decision": {
+      "type": "validate",
+      "question": "Should we build CC-Demo's Membership module, with the request, approval, payment and activation flow shown for the Membership Officer, Approver, Manager, Administrator and Member, as the base for the other six modules?"
+    },
+    "scenarios": "Feature: CC-Demo Membership (v01)\n\nScenario: Application approved with a fee waits for payment (Story-004, BR-029)\n  Given application RQ-xxxx for P-021 is Pending Approval with an entrance fee in configuration\n  When the Approver, who did not submit it, approves\n  Then the request is Awaiting Payment and a Finance stub hand-off is pending for the configured fee\n\nScenario: Payment recorded activates the membership (Story-004, BR-001, BR-173, BR-174)\n  Given the request is Awaiting Payment on 28 Oct 2026\n  When the Approver records payment through the Finance stub\n  Then a new Active membership gets a Membership ID of 2 initials and 5 digits, starts on 1 Nov 2026, expires after the type's term, gets a contract and a digital card, and the referral reward is raised when CMP-01 is active\n\nScenario: Portal renewal completes after payment (Story-005, BR-009)\n  Given member KD10004 is Active and expires in 40 days\n  When the Member requests a 2-year renewal in the portal, an Approver approves and records payment\n  Then the expiry moves out by 2 years\n\nScenario: Lifecycle check expires a membership past its expiry (Story-010, BR-014)\n  Given ON10014 is Active with an expiry before 28 Oct 2026\n  When the Officer runs the lifecycle check\n  Then ON10014 is Expired and its supplementary OO10015 is Ended\n\nScenario: Submitter cannot approve their own request (Story-029, BR-005)\n  Given an Approver submitted request RQ-xxxx\n  When the Approver opens it in the inbox\n  Then Approve, Reject, Return and Record payment are not offered\n\nScenario: Return for correction needs a reason and reopens the request (Story-029, BR-176, BR-175)\n  Given RQ-xxxx is Pending Approval\n  When the Approver returns it without a reason\n  Then it is refused; with a reason the request is Pending Documents and editable by its submitter\n\nScenario: Page not for the tab's role shows no content (Story-034, BR-084)\n  Given a Member tab\n  When it opens the approval inbox address\n  Then the page shows only who it is for and a link to the launcher\n\nScenario: Start link opens the guide at step 1 in the right tab (Story-038)\n  When the Presenter clicks Start on SC-01\n  Then the Officer tab opens the new application page with the guide panel at step 1 of SC-01",
+    "successCriteria": [
+      "Every lifecycle request completes only with every gate passed (documents, approval, payment): 100 %, no gate can be skipped",
+      "No request is decided by the person who submitted it (0 cases)",
+      "Every material action shows actor, role, time and from and to status in the history (100 %)",
+      "No policy value is hard-coded in a page: all read from configuration",
+      "Payment is handed to Finance once and confirmed once, through the labelled Finance stub until v07",
+      "Reviewers run the 15 v01 scenarios end to end with the scenario guide (15 of 15)"
+    ],
+    "businessRules": [
+      "BR-001: When a membership is activated, then it gets a unique Membership ID of 2 initials + 5 digits",
+      "BR-002: When a Person already has an open application for the same membership type and purpose, then a new one is blocked",
+      "BR-003: When an application is assessed, then the applicant must meet the eligibility of the type (adult types ≥ 21, Junior 5–20, Corporate: Singapore-registered company)",
+      "BR-004: When a request is submitted for approval, then every mandatory document of its type must be attached",
+      "BR-005: When a request is decided, then only an Approver (or the Manager where routed) may decide, and never the person who submitted it",
+      "BR-006: When a fee applies to an approved request, then it completes only after Finance confirms payment; a failed payment leaves it Awaiting Payment",
+      "BR-007: When an application is saved, then a recruitment source is required, and referrer details are required when the source is Referral",
+      "BR-008: When a renewal, conversion or extension would take combined Associate + Ordinary duration over 30 years (absent periods excluded), then it is blocked",
+      "BR-009: When a renewal is requested, then it must come from the member and the membership must be Active (or Absent / Medical)",
+      "BR-010: When Full converts to Basic, then remaining months × 2; when Basic converts to Full, then remaining months ÷ 2, rounded down",
+      "BR-011: When a transfer is requested, then the type must be transferable (Corporate is not) and the recipient must meet the type's eligibility",
+      "BR-012: When an extension is requested, then it may not exceed 24 months; ≤ 12 months goes to an Approver, > 12 months to the Manager",
+      "BR-013: When a withdrawal completes, then Finance must have cleared the balance, no refund of the remaining term is made, and the status becomes Withdrawn",
+      "BR-014: When the expiry date passes with no approved renewal, then the status becomes Expired; an approved rejoin reactivates with the original Membership ID",
+      "BR-015: When a deceased case proposes a goodwill refund, then only the Manager may approve it, and only then is it sent to Finance",
+      "BR-016: When an absent period is requested, then it must be 3–24 months and must not overlap an approved absent period; the term is suspended for it",
+      "BR-017: When a medical period is requested, then it may not exceed 12 months, and the expiry date is not changed",
+      "BR-018: When a status change is requested, then it is allowed only if the transition matrix permits it; a membership has exactly one current status",
+      "BR-019: When the status is Active, then privileges and billing are on; Absent / Medical: privileges off, billing per policy; Suspended: privileges off, billing on; other statuses: both off",
+      "BR-020: When a supplementary membership is created, then its principal must be Active; when the principal ends, the supplementary ends too",
+      "BR-021: When a junior member reaches 21, then junior eligibility ends; nothing converts automatically",
+      "BR-022: When a corporate nominee is assigned, then active nominees may not exceed the type's limit; a new corporate membership needs the Administrator",
+      "BR-023: When credit is checked, then available credit = In-House Credit Limit − Finance outstanding balance; if the Finance balance is unavailable, the check is blocked; Spending Credit Granted never changes",
+      "BR-024: When a vehicle is registered, then the membership must be Active and have fewer than 4 active vehicles",
+      "BR-025: When a card is issued, then the membership must be Active; the digital card is primary; a replacement voids the previous card",
+      "BR-026: When a marketing campaign is sent, then persons who withheld marketing consent are excluded; service correspondence is not affected",
+      "BR-027: When an active member's profile is saved, then mandatory fields (name, ID, date of birth, mobile, email, address) must be filled",
+      "BR-028: When a configuration value is referenced by a record, then it can be made inactive but not deleted",
+      "BR-029: When a request is approved, then its fee is read from the fee configuration of the type and event; no fee is requested before approval",
+      "BR-030: When a referred application completes, then a referral reward is raised only if an active referral campaign exists",
+      "BR-084: When a page opens in a tab, then it renders only if the tab's role is one the page lists; otherwise it shows no content, and every link to a page the role cannot open is plain text, not a link",
+      "BR-085: When a Member tab reads member data, then it reads only its own account (membership, requests, golf bookings, rain checks, event registrations), set once from the launcher",
+      "BR-171: When an application or profile is saved, then the email must be a valid address and the mobile a Singapore number (+65, 8 digits, starting 8 or 9)",
+      "BR-172: When dates are entered, then the date of birth is not in the future, and a period's end date is after its start date",
+      "BR-173: When the first fee of a new or rejoining membership is confirmed paid in a month, then the membership starts on the 1st of the next month",
+      "BR-174: When a membership starts or is renewed, then its expiry = start date + the type's term in months (from configuration), moved out by approved absent months (BR-016)",
+      "BR-175: When a request is Submitted, then it is read-only until it is returned for correction or decided; only a Draft or Pending Documents request can be edited",
+      "BR-176: When a request is rejected or returned, then a reason is required",
+      "BR-177: When a material action happens (create, submit, decide, pay, apply, status change, configuration change), then a history entry records actor, role, time, from and to status, and comment; entries are never edited or deleted",
+      "BR-178: When a fee request is waiting at Payment pending in v01, then only an Approver may record payment through the labelled Finance stub; nothing marks a payment confirmed by itself"
+    ],
+    "dataEntities": [
+      {
+        "name": "persons",
+        "fields": [
+          "id",
+          "fullName",
+          "idType",
+          "idNumber",
+          "dateOfBirth",
+          "mobile",
+          "email",
+          "address",
+          "nationality",
+          "marketingConsent"
+        ]
+      },
+      {
+        "name": "memberships",
+        "fields": [
+          "membershipId",
+          "personId",
+          "typeCode",
+          "status",
+          "joinedDate",
+          "startDate",
+          "expiryDate",
+          "absentPeriods",
+          "medicalPeriods",
+          "responsibleMembershipId",
+          "sponsorName",
+          "nominees",
+          "classification",
+          "transferredFrom",
+          "contract"
+        ]
+      },
+      {
+        "name": "requests",
+        "fields": [
+          "id",
+          "type",
+          "membershipId",
+          "personId",
+          "status",
+          "createdBy",
+          "createdByName",
+          "createdAt",
+          "submittedAt",
+          "route",
+          "details",
+          "documents",
+          "fee",
+          "decision",
+          "history"
+        ]
+      },
+      {
+        "name": "handoffs",
+        "fields": [
+          "id",
+          "requestId",
+          "membershipId",
+          "kind",
+          "description",
+          "amount",
+          "status",
+          "via",
+          "stubRef",
+          "recordedBy",
+          "createdAt"
+        ]
+      },
+      {
+        "name": "financeStub",
+        "fields": [
+          "available",
+          "outstanding"
+        ]
+      },
+      {
+        "name": "vehicles",
+        "fields": [
+          "id",
+          "membershipId",
+          "plate",
+          "make",
+          "status",
+          "labelHistory"
+        ]
+      },
+      {
+        "name": "cards",
+        "fields": [
+          "id",
+          "membershipId",
+          "kind",
+          "issued",
+          "status",
+          "reason"
+        ]
+      },
+      {
+        "name": "outbox",
+        "fields": [
+          "id",
+          "at",
+          "template",
+          "kind",
+          "recipient",
+          "ref",
+          "status"
+        ]
+      },
+      {
+        "name": "integrationEvents",
+        "fields": [
+          "id",
+          "at",
+          "target",
+          "event",
+          "ref",
+          "stub"
+        ]
+      },
+      {
+        "name": "audit",
+        "fields": [
+          "id",
+          "at",
+          "actor",
+          "role",
+          "action",
+          "ref",
+          "outcome",
+          "before",
+          "after"
+        ]
+      },
+      {
+        "name": "modules",
+        "fields": [
+          "code",
+          "name",
+          "builtIn",
+          "status",
+          "summary"
+        ]
+      },
+      {
+        "name": "config",
+        "fields": [
+          "membershipTypes",
+          "fees",
+          "limits",
+          "documents",
+          "transitions",
+          "privileges",
+          "recruitmentSources",
+          "templates",
+          "campaigns"
+        ]
+      }
+    ],
+    "scope": {
+      "in": [
+        "Membership: search and 360 view, profile, applications and the lifecycle request types, approvals with return for correction, Finance stub payments, lifecycle check, supplementary and corporate memberships, vehicles, digital card, credit check, campaigns and outbox, configuration, member portal, integration feed",
+        "Launcher with role tabs, module cards (six planned modules shown as Coming in v0N), module details, scenario guide, demo data export, import and reset",
+        "Dashboard with KPI tiles and charts; colour-coded table rows"
+      ],
+      "out": [
+        "Club Reporting, Golf, Events, Facilities, Resorts and Finance screens (deferred to v02 to v07)",
+        "Real authentication, portal sign-in, 2FA and Active Directory",
+        "Real e-mail and SMS, Yonyou, bank, Access Control, HMS and GMS integrations (simulated feed only)",
+        "Document upload and storage",
+        "Bulk actions",
+        "Any server, API or database"
+      ]
+    },
+    "constraints": [
+      "Policies (eligibility, documents, approvals, fees, durations, limits, status transitions) are configuration, never hard-coded",
+      "Finance values are never held as an authoritative Membership balance",
+      "Portal requests follow the same rules as staff requests",
+      "Unconfirmed hand-offs stay pending or failed, never successful",
+      "Historical records and referenced master data are never physically deleted",
+      "Static site opened from file://, browser storage, invented data, simulated integrations, Bootstrap 5.3.3 as the only library"
+    ],
+    "references": {
+      "prd": "projects/nsrcc_prototype/output/full-build/prd/prd-v1.md"
+    }
+  },
+  "design": {
+    "tokens": {
+      "color": {
+        "brand-primary": "#250E62",
+        "brand-primary-dark": "#B9A3F5",
+        "brand-primary-hover": "#1F0B54",
+        "brand-primary-hover-dark": "#CDBDF8",
+        "brand-on-primary": "#FFFFFF",
+        "brand-on-primary-dark": "#16131F",
+        "brand-accent": "#4B2AA5",
+        "brand-accent-dark": "#C4B2F7",
+        "brand-soft": "#F1EEFB",
+        "brand-soft-dark": "#2B2342",
+        "brand-alt": "#4B2AA5",
+        "brand-alt-dark": "#9F86F0",
+        "brand-alt-hover": "#250E62",
+        "brand-alt-hover-dark": "#B9A3F5",
+        "brand-on-alt": "#FFFFFF",
+        "brand-on-alt-dark": "#16131F",
+        "text": "#3E3E3E",
+        "text-dark": "#ECEAF2",
+        "link": "#4B2AA5",
+        "link-dark": "#C4B2F7",
+        "surface": "#FAF9FB",
+        "surface-dark": "#16131F",
+        "surface-2": "#FFFFFF",
+        "surface-2-dark": "#211C2E",
+        "surface-3": "#F1F2F4",
+        "surface-3-dark": "#1B1726",
+        "text-muted": "#6F7279",
+        "text-muted-dark": "#ABA6B8",
+        "text-planned": "#5F6268",
+        "text-planned-dark": "#ABA6B8",
+        "nav-text": "#727272",
+        "nav-text-dark": "#B8B4C2",
+        "border": "#DEDFE3",
+        "border-dark": "#3A3448",
+        "border-input": "#E0E0E0",
+        "border-input-dark": "#4A4358",
+        "border-strong": "#C4C4C4",
+        "border-strong-dark": "#5A5268",
+        "row-divider": "#EBEBEE",
+        "row-divider-dark": "#2E2839",
+        "focus-border": "#CDB8EF",
+        "focus-border-dark": "#9F86F0",
+        "footer-bg": "#250E62",
+        "footer-bg-dark": "#250E62",
+        "footer-text": "#FFFFFF",
+        "footer-text-dark": "#FFFFFF",
+        "footer-muted": "#DCD6EC",
+        "footer-muted-dark": "#DCD6EC",
+        "chip-hold-bg": "#FFF3DF",
+        "chip-hold-bg-dark": "#33280F",
+        "chip-hold-border": "#FFB45C",
+        "chip-hold-border-dark": "#8A6A2E",
+        "success": "#077D3C",
+        "success-dark": "#5FD68A",
+        "success-bg": "#E6F9EE",
+        "success-bg-dark": "#15301F",
+        "warning": "#895400",
+        "warning-dark": "#F0B55A",
+        "warning-bg": "#FFF5E6",
+        "warning-bg-dark": "#33280F",
+        "danger": "#C4050F",
+        "danger-dark": "#FF8A80",
+        "danger-bg": "#FFE7E9",
+        "danger-bg-dark": "#3A1E24",
+        "info": "#156BB5",
+        "info-dark": "#8CC4F5",
+        "info-bg": "#E9F3FA",
+        "info-bg-dark": "#132A3D",
+        "neutral": "#616161",
+        "neutral-dark": "#B8B4C2",
+        "neutral-bg": "#F1F2F4",
+        "neutral-bg-dark": "#2A2536",
+        "chip-primary-bg": "#F0EBFB",
+        "chip-primary-bg-dark": "#2B2342",
+        "chip-primary-border": "#B994FF",
+        "chip-primary-border-dark": "#6F5BB5",
+        "tag": "#B02561",
+        "tag-dark": "#F28DB8",
+        "tag-bg": "#FDE8F0",
+        "tag-bg-dark": "#3A2030",
+        "alert-bg": "#FFE7E9",
+        "alert-bg-dark": "#3A1E24",
+        "alert-border": "#FF1D2E",
+        "alert-border-dark": "#FF8A80",
+        "alert-title": "#C4050F",
+        "alert-title-dark": "#FF8A80",
+        "qr-bg": "#FFFFFF",
+        "qr-bg-dark": "#FFFFFF",
+        "qr-fg": "#141414",
+        "qr-fg-dark": "#141414"
+      },
+      "font": {
+        "family": "Lato, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+        "size": "16px",
+        "launcherTitle": "3rem / 900",
+        "h1": "2rem / 900",
+        "h2": "1.5rem / 700",
+        "h3": "1.25rem / 700",
+        "label": "0.875rem / 700",
+        "badge": "0.75rem / 700"
+      },
+      "space": {
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "24px",
+        "6": "32px",
+        "7": "48px",
+        "8": "64px"
+      },
+      "radius": {
+        "button": "4px",
+        "card": "8px",
+        "banner": "12px"
+      }
+    },
+    "platform": {
+      "primary": "desktop",
+      "viewports": [
+        375,
+        1280
+      ]
+    },
+    "states": [
+      "empty",
+      "error",
+      "success",
+      "disabled"
+    ],
+    "content": {
+      "locale": "en-SG",
+      "currency": "SGD",
+      "dateFormat": "D MMM YYYY",
+      "tone": "clear and brief"
+    },
+    "navigation": "tabs",
+    "components": [
+      "App shell: white header with wordmark, role links, role avatar, Launcher, theme toggle and a menu below 992px",
+      "Footer band",
+      "Request journey rail (full and compact)",
+      "Buttons (primary, secondary, danger, alt card buttons)",
+      "Option tiles",
+      "Form fields with inline errors",
+      "Data table, left-aligned, with colour-coded rows",
+      "Status badge and chips (role, Submitted by you, Coming in v0N, Finance stub)",
+      "KPI tile",
+      "Chart (bar, donut)",
+      "Tabs",
+      "Modal",
+      "Toast",
+      "Gate checklist",
+      "Finance stub card",
+      "Workflow history timeline",
+      "Empty state",
+      "Digital membership card",
+      "Facts list",
+      "Blocked panel",
+      "Launcher: collapsible sections, module cards (live and planned), role cards, member tabs panel, demo data section",
+      "Scenario guide side panel"
+    ],
+    "accessibility": {
+      "standard": "WCAG 2.2 AA",
+      "minTapTargetPx": 44
+    },
+    "visualReferences": [
+      {
+        "ref": "projects/nsrcc_prototype/input/MMS/nsrcc-brand-guideline.md",
+        "shows": "NSRCC web brand: purple palette, neutrals, semantic colours, radii, components",
+        "use": "Colour tokens, radii, button and card styles"
+      },
+      {
+        "ref": "NSRCC Brand Guideline design canvas (claude.ai artifact)",
+        "shows": "Brand purple scale, neutrals, semantic colours, booking chips, Lato type, UI kit, header and footer bands, Bootstrap mapping",
+        "use": "Every colour token, Lato, radii, shadows, the stepper (journey rail), avatar, booking chips, footer band, buttons, option tiles, fields, tables, banners and toasts (design pass 3, D-247, D-248)"
+      },
+      {
+        "ref": "projects/nsrcc_prototype/output/rapid-build-v09/prototype/index.html",
+        "shows": "The approved v09 launcher and page look",
+        "use": "Layout and components kept: CC-Demo name, collapsible sections, module cards, scenario guide"
+      }
+    ]
+  }
+}

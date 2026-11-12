@@ -1,0 +1,104 @@
+<!doctype html>
+<!-- Event setup · CC-Demo · Build: full-build-v08 · Version: v08 · KO: KO-037 · from v07
+     From agent/reference/templates/page.html; layout rules Layout-01 to Layout-15; logic in js/rules.js, js/workflow.js and js/app.js. -->
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Event setup · CC-Demo</title>
+  <script>try { var t = localStorage.getItem("ccdemo-theme"); } catch (e) {} document.documentElement.setAttribute("data-bs-theme", t === "dark" ? "dark" : "light");</script>
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="eventEdit">
+
+  <header class="app-header navbar navbar-expand-xl">
+    <div class="container cluster cluster--between">
+      <a class="navbar-brand brand" href="index.html"><span class="brand__tile" aria-hidden="true">C</span><span class="brand__mark">CC-Demo</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Show the menu"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse cluster cluster--between" id="main-nav">
+      <nav class="nav app-nav" aria-label="Main">
+        <a class="nav-link" href="dashboard.html" data-roles="officer approver manager admin">Dashboard</a>
+        <a class="nav-link" href="members.html" data-roles="officer approver manager admin">Members</a>
+        <a class="nav-link" href="approvals.html" data-roles="approver manager">Approvals</a>
+        <a class="nav-link" href="requests.html" data-roles="officer approver manager admin">Requests</a>
+        <a class="nav-link" href="application.html" data-roles="officer">New Application</a>
+        <a class="nav-link" href="request-new.html" data-roles="officer admin">New Request</a>
+        <a class="nav-link" href="communications.html" data-roles="officer manager">Communications</a>
+        <a class="nav-link" href="config.html" data-roles="admin">Configuration</a>
+        <a class="nav-link" href="integrations.html" data-roles="officer admin events">Integration Feed</a>
+        <a class="nav-link" href="golf-teesheet.html" data-roles="golfops">Tee Sheet</a>
+        <a class="nav-link" href="golf-waitlist.html" data-roles="golfops">Waitlist</a>
+        <a class="nav-link" href="golf-course.html" data-roles="golfops">Course Control</a>
+        <a class="nav-link" href="golfers.html" data-roles="golfops">Golfers</a>
+        <a class="nav-link" href="golf-close.html" data-roles="golfops">Shift Close</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Golf</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="golf-teesheet.html">Tee Sheet</a></li><li data-roles="manager"><a class="dropdown-item" href="golf-course.html">Course Control</a></li><li data-roles="manager admin"><a class="dropdown-item" href="golfers.html">Golfers</a></li><li data-roles="admin"><a class="dropdown-item" href="golf-admin.html">Golf Admin</a></li></ul></div>
+        <a class="nav-link" href="events.html" data-roles="events manager golfops">Events</a>
+        <a class="nav-link" href="event-rooms.html" data-roles="events">Function Rooms</a>
+        <a class="nav-link" href="facilities.html" data-roles="facilities manager">Facilities</a>
+        <a class="nav-link" href="facility-bookings.html" data-roles="facilities">Bookings</a>
+        <a class="nav-link" href="facility-admission.html" data-roles="facilities">Admissions</a>
+        <a class="nav-link" href="bowling.html" data-roles="facilities">Bowling</a>
+        <a class="nav-link" href="facility-admin.html" data-roles="admin">Facilities Admin</a>
+        <a class="nav-link" href="resort-desk.html" data-roles="resorts">Front desk</a>
+        <a class="nav-link" href="resort-rooms.html" data-roles="resorts housekeeping">Rooms</a>
+        <a class="nav-link" href="resort-audit.html" data-roles="resorts">Night Audit</a>
+        <div class="nav-item dropdown" data-roles="manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Resorts</a>
+          <ul class="dropdown-menu"><li data-roles="manager"><a class="dropdown-item" href="resort-desk.html">Front desk</a></li><li data-roles="manager"><a class="dropdown-item" href="resort-rooms.html">Rooms</a></li><li data-roles="manager admin"><a class="dropdown-item" href="resort-audit.html">Night Audit</a></li><li data-roles="admin"><a class="dropdown-item" href="resort-config.html">Resort config</a></li></ul></div>
+        <a class="nav-link" href="finance.html" data-roles="finance finapprover">Finance home</a>
+        <a class="nav-link" href="fin-approvals.html" data-roles="finapprover">Approvals</a>
+        <div class="nav-item dropdown" data-roles="finance finapprover manager admin"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Finance</a>
+          <ul class="dropdown-menu"><li data-roles="manager admin"><a class="dropdown-item" href="finance.html">Finance home</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-events.html">Financial events</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-accounts.html">Member accounts</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-collections.html">Collections</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-refunds.html">Refunds and adjustments</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recognition.html">Revenue recognition</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-recon.html">Reconciliation and exceptions</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-posting.html">Periods and posting</a></li><li data-roles="finance finapprover manager admin"><a class="dropdown-item" href="fin-dunning.html">Dunning</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-ar.html">General AR</a></li><li data-roles="finance finapprover"><a class="dropdown-item" href="fin-config.html">Finance configuration</a></li><li data-roles="finance"><a class="dropdown-item" href="fin-approvals.html">Finance approvals</a></li></ul></div>
+        <a class="nav-link" href="reports.html" data-roles="officer golfops facilities resorts finance finapprover manager admin">Reports</a>
+        <a class="nav-link" href="portal.html" data-roles="member">My Membership</a>
+      </nav>
+      <div class="cluster">
+        <span class="role-avatar"><span class="role-avatar__initials" aria-hidden="true" data-role-initials>CC</span><span data-role-label>No role</span></span>
+        <a class="btn btn-sm btn-outline-secondary" href="index.html">Launcher</a>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-theme-toggle aria-label="Switch light or dark theme">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="container stack stack--sections" id="main">
+    <div class="page-header">
+      <div class="stack"><span class="eyebrow" data-golf-clock>Demo clock</span><h1 id="pg-title">Event setup</h1><p class="cluster" id="ee-status"></p></div>
+      <div class="btn-row"><a class="btn btn-outline-secondary" href="events.html">Events</a></div>
+    </div>
+    <form class="stack stack--sections" id="ee-form" novalidate>
+      <div class="alert alert-warning" role="alert" id="ee-err" hidden></div>
+    <section class="stack" aria-labelledby="eed-h"><h2 id="eed-h">Event</h2><p class="text-muted">Venues are names only; Facilities owns rooms from v05.</p>
+      <div class="form-grid"><div class="field"><label class="form-label" for="ee-name">Name</label><input class="form-control" id="ee-name" name="name" type="text"></div><div class="field"><label class="form-label" for="ee-category">Category</label><input class="form-control" id="ee-category" name="category" type="text"></div><div class="field"><label class="form-label" for="ee-venue">Venue</label><select class="form-select" id="ee-venue" name="venue"></select></div><div class="field"><label class="form-label" for="ee-paid">Free or paid</label><select class="form-select" id="ee-paid" name="paid"><option value="paid">Paid</option><option value="free">Free</option></select></div><div class="field"><label class="form-label" for="ee-eligibility">Who may register</label><select class="form-select" id="ee-eligibility" name="eligibility"></select></div><div class="field"><label class="form-label" for="ee-scope">Registration by</label><select class="form-select" id="ee-scope" name="scope"></select></div></div>
+    </section>
+    <section class="stack" aria-labelledby="eer-h"><h2 id="eer-h">Registration</h2>
+      <div class="form-grid"><div class="field"><label class="form-label" for="ee-windowOpen">Window opens</label><input class="form-control" id="ee-windowOpen" name="windowOpen" type="text" placeholder="YYYY-MM-DD HH:MM"></div><div class="field"><label class="form-label" for="ee-windowClose">Window closes</label><input class="form-control" id="ee-windowClose" name="windowClose" type="text" placeholder="YYYY-MM-DD HH:MM"></div><div class="field"><label class="form-label" for="ee-capacity">Capacity</label><input class="form-control" id="ee-capacity" name="capacity" type="number" min="1"></div><div class="field"><label class="form-label" for="ee-minParticipants">Minimum participants</label><input class="form-control" id="ee-minParticipants" name="minParticipants" type="number" min="0"></div><div class="field"><label class="form-label" for="ee-maxPerRegistration">Participants per registration</label><input class="form-control" id="ee-maxPerRegistration" name="maxPerRegistration" type="number" min="1"></div><div class="field"><div class="form-check"><input class="form-check-input" type="checkbox" id="ee-waitlist" name="waitlist"><label class="form-check-label" for="ee-waitlist">Waitlist when full</label></div></div></div>
+    </section>
+    <section class="stack" aria-labelledby="eerr-h"><h2 id="eerr-h">Rates (S$)</h2>
+      <div class="form-grid"><div class="field"><label class="form-label" for="ee-memberAdult">Member adult</label><input class="form-control" id="ee-memberAdult" name="memberAdult" type="number" min="0"></div><div class="field"><label class="form-label" for="ee-memberChild">Member child</label><input class="form-control" id="ee-memberChild" name="memberChild" type="number" min="0"></div><div class="field"><label class="form-label" for="ee-nonMemberAdult">Non-member adult</label><input class="form-control" id="ee-nonMemberAdult" name="nonMemberAdult" type="number" min="0"></div><div class="field"><label class="form-label" for="ee-nonMemberChild">Non-member child</label><input class="form-control" id="ee-nonMemberChild" name="nonMemberChild" type="number" min="0"></div></div>
+    </section>
+    <section class="stack" aria-labelledby="ees-h"><h2 id="ees-h">Sessions</h2>
+      <div class="table-wrap table-wrap--cards"><table class="table" id="ee-sessions"><thead><tr><th scope="col">Session</th><th scope="col" class="num">Date</th><th scope="col" class="num">Start</th><th scope="col" class="num">End</th><th scope="col">Personnel</th><th scope="col" class="col-actions"><span class="visually-hidden">Actions</span></th></tr></thead><tbody></tbody></table></div>
+    </section>
+      <div class="btn-row"><button type="button" class="btn btn-outline-danger" id="ee-cancel">Cancel event</button><button type="button" class="btn btn-outline-secondary" id="ee-savedraft">Save draft</button><button type="button" class="btn btn-primary" id="ee-save">Save changes</button><button type="button" class="btn btn-primary" id="ee-publish">Publish</button></div>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container cluster cluster--between"><strong>CC-Demo</strong><span>Version 8: all seven modules (Membership, Club Reporting, Golf, Events, Facilities, Resorts and Finance). All data is invented.</span></div>
+  </footer>
+
+  <div class="toast-host" aria-live="polite"></div>
+  <script src="vendor/bootstrap.bundle.min.js"></script>
+  <script src="data/seed.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/workflow.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
